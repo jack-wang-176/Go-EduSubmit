@@ -4,7 +4,7 @@ import "homework_submit/model"
 
 type HomeworkDao struct{}
 
-var Homework HomeworkDao
+var Homework = new(HomeworkDao)
 
 func (d *HomeworkDao) LaunchHomework(h *model.Homework) error {
 	return DB.Create(h).Error
@@ -18,7 +18,7 @@ func (d *HomeworkDao) DeleteHomework(h *model.Homework) error {
 	return DB.Delete(h).Error
 }
 
-func (d *HomeworkDao) GetHomework(title string) ([]model.Homework, error) {
+func (d *HomeworkDao) GetHomeworkByTitle(title string) ([]model.Homework, error) {
 	var homeworks []model.Homework
 	tx := DB.Where("title = ?", title).Find(&homeworks)
 	if tx.Error != nil {

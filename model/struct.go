@@ -36,7 +36,7 @@ type User struct {
 type Homework struct {
 	gorm.Model
 	Title       string     `gorm:"type:varchar(200);not null" json:"title"`
-	Description string     `gorm:"type:text;not null" json:"description"`
+	Description string     `gorm:"type:text;default:nil" json:"description"`
 	CreatorID   uint       `gorm:"not null" json:"creator_id"`
 	Deadline    time.Time  `gorm:"not null" json:"deadline"`
 	AllowLate   bool       `gorm:"not null;default:false" json:"allow_late"`
@@ -54,4 +54,5 @@ type Submission struct {
 	Comment     string    `gorm:"type:text" json:"comment"`
 	FileUrl     string    `gorm:"type:varchar(500)" json:"file_url"`
 	IsExcellent bool      `gorm:"not null;default:false" json:"is_excellent"`
+	Version     *int      `gorm:"default:1" json:"version"`
 }
