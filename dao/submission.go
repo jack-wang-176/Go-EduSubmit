@@ -7,21 +7,21 @@ import (
 	"gorm.io/gorm"
 )
 
-type Submission struct{}
+type submission struct{}
 
-var Sub = new(Submission)
+var SubDao = new(submission)
 var Excellent = 1
 
-func (Sub *Submission) CreateSub(s *model.Submission) error {
+func (Sub *submission) CreateSub(s *model.Submission) error {
 	return DB.Create(&s).Error
 }
-func (Sub *Submission) UpdateSub(s *model.Submission) error {
+func (Sub *submission) UpdateSub(s *model.Submission) error {
 	return DB.Save(&s).Error
 }
-func (Sub *Submission) DeleteSub(s *model.Submission) error {
+func (Sub *submission) DeleteSub(s *model.Submission) error {
 	return DB.Delete(&s).Error
 }
-func (Sub *Submission) MySubs(my int) (*[]model.Submission, error) {
+func (Sub *submission) MySubs(my int) (*[]model.Submission, error) {
 	var s []model.Submission
 	tx := DB.Where("CreatorID = ?", my).Find(&s)
 	if tx.Error != nil {
@@ -29,7 +29,7 @@ func (Sub *Submission) MySubs(my int) (*[]model.Submission, error) {
 	}
 	return &s, nil
 }
-func (Sub *Submission) DepartmentSubs(department int) (*[]model.Submission, error) {
+func (Sub *submission) DepartmentSubs(department int) (*[]model.Submission, error) {
 	var s []model.Submission
 	tx := DB.Where("DepartmentID = ?", department).Find(&s)
 	if tx.Error != nil {
@@ -38,7 +38,7 @@ func (Sub *Submission) DepartmentSubs(department int) (*[]model.Submission, erro
 	return &s, nil
 }
 
-func (Sub *Submission) ChangeSub(s *model.Submission, score int, comment string, excellent int) error {
+func (Sub *submission) ChangeSub(s *model.Submission, score int, comment string, excellent int) error {
 	ex := excellent == Excellent
 	result := DB.Model(s).Where("Version = ?", s.Version).Updates(map[string]interface{}{
 		"Score":     score,
@@ -55,7 +55,7 @@ func (Sub *Submission) ChangeSub(s *model.Submission, score int, comment string,
 	return nil
 }
 
-func (Sub *Submission) DetectExcellent() (*[]uint, error) {
+func (Sub *submission) DetectExcellent() (*[]uint, error) {
 	var s []model.Submission
 	var homeworks []uint
 	tx := DB.Where("isExcellent = ?", true).Find(&s)
