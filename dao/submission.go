@@ -18,17 +18,23 @@ func (Sub *submission) CreateSub(s *model.Submission) error {
 func (Sub *submission) DeleteSub(s *model.Submission) error {
 	return DB.Delete(&s).Error
 }
-func (Sub *submission) MySubs(my string) (*[]model.Submission, error) {
+func (Sub *submission) MySubs(my string, page, pageSize int) (*[]model.Submission, int64, error) {
 	var s []model.Submission
+	var total int64
 	me, err := UserDao.GetUserByName(my)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	tx := DB.Where("CreatorID = ?", me).Find(&s)
-	if tx.Error != nil {
-		return nil, tx.Error
+	query := DB.Model(&model.Submission{}).Where("CreatorID = ?", me)
+	if query.Count(&total).Error != nil {
+		//TODO
 	}
-	return &s, nil
+	offset := (page - 1) * pageSize
+	query.Preload("Homework").Preload("Student").Offset(offset).Limit(pageSize).Find(&s)
+	if query.Error != nil {
+		return nil, 0, query.Error
+	}
+	return &s, 0, nil
 }
 func (Sub *submission) DepartmentSubs(department model.Department) (*[]model.Submission, error) {
 	var s []model.Submission
@@ -57,18 +63,6 @@ func (Sub *submission) ChangeSub(s *model.Submission, reviewer string, score int
 	return nil
 }
 
-func (Sub *submission) DetectExcellent() (*[]uint, error) {
-	var s []model.Submission
-	var homeworks []uint
-	tx := DB.Where("isExcellent = ?", true).Find(&s)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-	for _, sub := range s {
-		homeworks = append(homeworks, sub.HomeworkID)
-	}
-	return &homeworks, nil
-}
 func (Sub *submission) GetSub(title, name string) (model *model.Submission, err error) {
 	var sub model.Submission
 	u, err := UserDao.GetUserByName(name)
@@ -81,4 +75,19 @@ func (Sub *submission) GetSub(title, name string) (model *model.Submission, err 
 	}
 	DB.Where("StudentID = ?, HomeworkID = ?", u.ID, h.ID).First(&sub)
 	return &sub, nil
+}
+func (Sub *submission) GetExcellentList(page, pageSize int) ([]model.Homework, int64, error) {
+	var s []model.Homework
+	var total int64
+	query := DB.Model(&model.Homework{}).Where("isExcellent = ?", true)
+	tx := query.Count(&total)
+	if tx.Error != nil {
+		//TODO
+	}
+	offset := (page - 1) * pageSize
+	err := query.Preload("Homework").Preload("Student").Offset(offset).Limit(pageSize).Find(&s).Error
+	if err != nil {
+		//TODO
+	}
+	return s, total, nil
 }

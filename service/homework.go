@@ -61,10 +61,15 @@ func (s *homeworkService) GetHomework(title string) (*model.Homework, error) {
 	}
 	return &h, nil
 }
-func (s *homeworkService) GetDepartmentWork(department model.Department) (*[]model.Homework, error) {
-	homeworks, err := dao.HomeworkDao.GetHomeworkByDepartment(department)
+func (s *homeworkService) GetDepartmentWork(department model.Department, page, pageSize int) (*model.PageResponse, error) {
+	homeworks, total, err := dao.HomeworkDao.GetHomeworkByDepartment(department, page, pageSize)
 	if err != nil {
 		//TODO
 	}
-	return &homeworks, nil
+	return &model.PageResponse{
+		ListHomework: homeworks,
+		Total:        total,
+		PageSize:     pageSize,
+		Page:         page,
+	}, nil
 }

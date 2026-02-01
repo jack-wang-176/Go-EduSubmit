@@ -49,11 +49,21 @@ func (d *homeworkDao) GetHomeworkByID(id uint) (*model.Homework, error) {
 	}
 	return &h, nil
 }
-func (d *homeworkDao) GetHomeworkByDepartment(department model.Department) ([]model.Homework, error) {
+func (d *homeworkDao) GetHomeworkByDepartment(department model.Department, page, pageSize int) ([]model.Homework, int64, error) {
 	var homeworks []model.Homework
-	tx := DB.Where("Department = ?", department).Find(&homeworks)
+	var total int64
+	query := DB.Model(&model.Homework{}).Where("Department = ?", department)
+	if query.Error != nil {
+		//TODO
+	}
+	tx := query.Count(&total)
 	if tx.Error != nil {
 		//TODO
 	}
-	return homeworks, nil
+	offset := (page - 1) * pageSize
+	err := query.Preload("Homework").Preload("Student").Offset(offset).Limit(pageSize).Find(&homeworks).Error
+	if err != nil {
+		//TODO
+	}
+	return homeworks, total, nil
 }

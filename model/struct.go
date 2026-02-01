@@ -47,7 +47,9 @@ type Homework struct {
 type Submission struct {
 	gorm.Model
 	HomeworkID  uint      `gorm:"not null;index" json:"homework_id"`
+	Homework    Homework  `gorm:"foreignKey:HomeworkID" json:"homework"`
 	StudentID   uint      `gorm:"not null;index" json:"student_id"`
+	Student     User      `gorm:"foreignKey:StudentID" json:"student"`
 	SubmittedAt time.Time `gorm:"not null" json:"submitted_at"`
 	IsLate      bool      `gorm:"not null;default:false" json:"is_late"`
 	ReviewerID  *uint     `gorm:"default:null" json:"reviewer_id"`
@@ -56,4 +58,11 @@ type Submission struct {
 	FileUrl     string    `gorm:"type:varchar(500)" json:"file_url"`
 	IsExcellent bool      `gorm:"not null;default:false" json:"is_excellent"`
 	Version     *int      `gorm:"default:1" json:"version"`
+}
+type PageResponse struct {
+	ListSub      *[]Submission `json:"list"`
+	ListHomework *[]Homework   `json:"homework"`
+	Total        int64         `json:"total"`
+	Page         int           `json:"page"`
+	PageSize     int           `json:"page_size"`
 }

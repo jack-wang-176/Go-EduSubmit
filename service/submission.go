@@ -19,6 +19,9 @@ func (Sub *submission) CreateSub(creator, title string) error {
 	if err != nil {
 		//TODO
 	}
+	if !homework.AllowLate && homework.Deadline.Before(time.Now()) {
+		//TODO
+	}
 	sub := model.Submission{
 		HomeworkID:  homework.ID,
 		StudentID:   student.ID,
@@ -31,12 +34,17 @@ func (Sub *submission) CreateSub(creator, title string) error {
 	}
 	return nil
 }
-func (Sub *submission) MySub(name string) (*[]model.Submission, error) {
-	subs, err := dao.SubDao.MySubs(name)
+func (Sub *submission) MySub(name string, page, pageSize int) (*model.PageResponse, error) {
+	subs, total, err := dao.SubDao.MySubs(name, page, pageSize)
 	if err != nil {
 		//TODO
 	}
-	return subs, err
+	return &model.PageResponse{
+		Total:    total,
+		Page:     page,
+		ListSub:  subs,
+		PageSize: pageSize,
+	}, err
 }
 func (Sub *submission) DepartmentSub(department model.Department) (*[]model.Submission, error) {
 	subs, err := dao.SubDao.DepartmentSubs(department)
@@ -56,18 +64,15 @@ func (Sub *submission) ChangeSub(title, name, reviewer, comment string, score, e
 	}
 	return nil
 }
-func (Sub *submission) ExcellentSub() (*[]model.Homework, error) {
-	excellents, err := dao.SubDao.DetectExcellent()
+func (Sub *submission) GetExcellentList(page, pageSize int) (*model.PageResponse, error) {
+	subs, total, err := dao.SubDao.GetExcellentList(page, pageSize)
 	if err != nil {
 		//TODO
 	}
-	var homeworks []model.Homework
-	for _, excellent := range *excellents {
-		homework, err := dao.HomeworkDao.GetHomeworkByID(excellent)
-		if err != nil {
-			//TODO
-		}
-		homeworks = append(homeworks, *homework)
-	}
-	return &homeworks, nil
+	return &model.PageResponse{
+		ListHomework: &subs,
+		Total:        total,
+		Page:         page,
+		PageSize:     pageSize,
+	}, nil
 }

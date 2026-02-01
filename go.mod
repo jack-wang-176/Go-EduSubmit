@@ -1,11 +1,12 @@
 module homework_submit
 
-go 1.25
+go 1.25.4
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
+	github.com/jack-wang-176/Maple v0.0.0-20251226115450-cf7fc9f901ec // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	golang.org/x/crypto v0.47.0 // indirect
