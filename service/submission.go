@@ -8,7 +8,7 @@ import (
 
 type submission struct{}
 
-var Sub submission
+var SubService submission
 
 func (Sub *submission) CreateSub(creator, title string) error {
 	student, err := dao.UserDao.GetUserByName(creator)

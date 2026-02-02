@@ -6,6 +6,8 @@ github.com/golang-jwt/jwt/v5 v5.3.1 h1:kYf81DTWFe7t+1VvL7eS+jKFVWaUnK9cB1qbwn63Y
 github.com/golang-jwt/jwt/v5 v5.3.1/go.mod h1:fxCRLWMO43lRc8nhHWY6LGqRcf+1gQWArsqaEUEa5bE=
 github.com/jack-wang-176/Maple v0.0.0-20251226115450-cf7fc9f901ec h1:FVBK2aqOFbEzZAdinZlWlo9bGsLhvaqKBI4/M5XD9TE=
 github.com/jack-wang-176/Maple v0.0.0-20251226115450-cf7fc9f901ec/go.mod h1:FNDTR4iDsnl2ahxDGPlo0al71+Mae4XAOvWNQvdRqE8=
+github.com/jack-wang-176/Maple v0.0.0-20260202143949-72cc373369a7 h1:AhtoAFA3YzmA4KOYdyxry4X/MQD+2NGsNEYbd1gSL3Y=
+github.com/jack-wang-176/Maple v0.0.0-20260202143949-72cc373369a7/go.mod h1:FNDTR4iDsnl2ahxDGPlo0al71+Mae4XAOvWNQvdRqE8=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=

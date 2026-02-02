@@ -30,3 +30,13 @@ func (d *userDao) GetUserByName(name string) (*model.User, error) {
 	}
 	return &user, nil
 }
+func (d *userDao) DetectRole(name string) (bool, error) {
+	user, err := UserDao.GetUserByName(name)
+	if err != nil {
+		return false, err
+	}
+	if user.Role == model.Admin {
+		return true, nil
+	}
+	return false, nil
+}

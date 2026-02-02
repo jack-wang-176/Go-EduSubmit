@@ -13,7 +13,7 @@ type userService struct{}
 
 var UserService = new(userService)
 
-func (u *userService) Register(username, password, nickname string, role, dept int8) error {
+func (u *userService) Register(username, password, nickname string, role model.Role, dept model.Department) error {
 	already, err := dao.UserDao.GetUserByName(username)
 	if already == nil || err != nil {
 		//TODO 进行错误处理
@@ -26,8 +26,8 @@ func (u *userService) Register(username, password, nickname string, role, dept i
 		Name:       username,
 		Password:   harsh,
 		Nickname:   nickname,
-		Role:       model.Role(role),
-		Department: model.Department(dept),
+		Role:       role,
+		Department: dept,
 	}
 	err = dao.UserDao.CreateUser(user)
 	if err != nil {
@@ -58,4 +58,11 @@ func (u *userService) Login(username, password string) (string, string, error) {
 	}
 
 	return pkg.TokenCreate(user)
+}
+func (u *userService) DetectUser(username string) (bool, error) {
+	role, err := dao.UserDao.DetectRole(username)
+	if err != nil {
+		return false, err
+	}
+	return role, nil
 }
