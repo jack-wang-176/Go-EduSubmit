@@ -3,6 +3,7 @@ package service
 import (
 	"homework_submit/dao"
 	"homework_submit/model"
+	"homework_submit/pkg"
 	"time"
 )
 
@@ -14,10 +15,10 @@ var HomeworkService = homeworkService{}
 func (s *homeworkService) LaunchHomework(title, des, creator string, late bool, deadline time.Time) error {
 	create, err := dao.UserDao.GetUserByName(creator)
 	if err != nil {
-		//TODO 错误检查
+		return pkg.ErrUserNotFound
 	}
 	if create == nil {
-		//TODO 错误检查
+		return pkg.ErrUserNotFound
 	}
 	err = dao.HomeworkDao.LaunchHomework(&model.Homework{
 		Title:       title,
@@ -28,18 +29,18 @@ func (s *homeworkService) LaunchHomework(title, des, creator string, late bool, 
 		Deadline:    deadline,
 	})
 	if err != nil {
-		//TODO 错误检查
+		return pkg.ErrorPkg.WithCause(err)
 	}
 	return nil
 }
 func (s *homeworkService) DeleteHomework(title string) error {
 	homework, err := dao.HomeworkDao.GetHomeworkByTitle(title)
 	if err != nil {
-		//TODO 错误去处理
+		return pkg.ErrorPkg.WithCause(err)
 	}
 	err = dao.HomeworkDao.DeleteHomework(&homework)
 	if err != nil {
-		//TODO
+		return pkg.ErrorPkg.WithCause(err)
 	}
 	return nil
 }
@@ -62,17 +63,17 @@ func (s *homeworkService) UpdateHomework(id uint, title, des string, department 
 func (s *homeworkService) GetHomework(title string) (*model.Homework, error) {
 	h, err := dao.HomeworkDao.GetHomeworkByTitle(title)
 	if err != nil {
-		//TODO
+		return nil, pkg.ErrorPkg.WithCause(err)
 	}
 	return &h, nil
 }
 func (s *homeworkService) GetDepartmentWork(department model.Department, page, pageSize int) (*model.PageResponse, error) {
 	homeworks, total, err := dao.HomeworkDao.GetHomeworkByDepartment(department, page, pageSize)
 	if err != nil {
-		//TODO
+		return nil, pkg.ErrorPkg.WithCause(err)
 	}
 	return &model.PageResponse{
-		ListHomework: homeworks,
+		ListHomework: &homeworks,
 		Total:        total,
 		PageSize:     pageSize,
 		Page:         page,
