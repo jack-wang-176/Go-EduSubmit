@@ -43,14 +43,19 @@ func (s *homeworkService) DeleteHomework(title string) error {
 	}
 	return nil
 }
-func (s *homeworkService) UpdateHomework(title, newTitle, des string, department model.Department, deadline time.Time, allow bool) error {
-	h, err := dao.HomeworkDao.GetHomeworkByTitle(title)
+
+func (s *homeworkService) UpdateHomework(id uint, title, des string, department model.Department, deadline time.Time, allow bool, version int) error {
+
+	h, err := dao.HomeworkDao.GetHomeworkByID(id)
 	if err != nil {
-		//TODO
+		return err
 	}
-	err = dao.HomeworkDao.UpdateHomework(&h, newTitle, des, department, deadline, allow)
+
+	h.Version = &version
+
+	err = dao.HomeworkDao.UpdateHomework(h, title, des, department, deadline, allow)
 	if err != nil {
-		//TODO
+		return err
 	}
 	return nil
 }
