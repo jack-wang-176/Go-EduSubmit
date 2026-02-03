@@ -16,9 +16,10 @@ func (e *CollectError) Error() string {
 func (e *CollectError) Unwrap() error {
 	return e.Raw
 }
-func (e *CollectError) New(code int, msg string) *CollectError {
+func New(code int, msg string, statusCode int) *CollectError {
 	err := new(CollectError)
 	err.Code = code
 	err.Msg = msg
+	err.Status = statusCode
 	return err
 }
