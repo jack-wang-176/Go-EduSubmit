@@ -25,7 +25,7 @@ func (d *homeworkDao) UpdateHomework(h *model.Homework, title, des string, depar
 		"allow_late":  allow,
 		"deadline":    deadline,
 		"department":  department,
-		"version":     gorm.Expr("version + 1"), /
+		"version":     gorm.Expr("version + 1"),
 	})
 
 	if tx.Error != nil {

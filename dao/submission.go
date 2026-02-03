@@ -63,17 +63,20 @@ func (Sub *submission) ChangeSub(s *model.Submission, reviewer string, score int
 	return nil
 }
 
-func (Sub *submission) GetSub(title, name string) (model *model.Submission, err error) {
+func (Sub *submission) GetSub(title, name string) (*model.Submission, error) {
 	var sub model.Submission
 	u, err := UserDao.GetUserByName(name)
 	if err != nil {
-		//TODO
+		return nil, err
 	}
 	h, err := HomeworkDao.GetHomeworkByTitle(title)
 	if err != nil {
-		//TODO
+		return nil, err
 	}
-	DB.Where("StudentID = ?, HomeworkID = ?", u.ID, h.ID).First(&sub)
+
+	if err := DB.Where("student_id = ? AND homework_id = ?", u.ID, h.ID).First(&sub).Error; err != nil {
+		return nil, err
+	}
 	return &sub, nil
 }
 func (Sub *submission) GetExcellentList(page, pageSize int) ([]model.Homework, int64, error) {
