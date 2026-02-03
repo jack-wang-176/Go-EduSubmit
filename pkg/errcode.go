@@ -12,6 +12,7 @@ var (
 	ErrUserNotFound      = New(20001, "用户不存在", http.StatusOK) // 业务上算失败，但HTTP可以是200也可以是404，看你规范
 	ErrPasswordIncorrect = New(20002, "密码错误", http.StatusOK)
 	ErrUserExists        = New(20003, "用户已存在", http.StatusOK)
+	ErrAlreadyLate       = New(20004, "作业提交已经关闭", http.StatusOK)
 )
 
 var (
