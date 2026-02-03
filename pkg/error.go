@@ -1,6 +1,8 @@
 package pkg
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type CollectError struct {
 	Raw    error
@@ -8,6 +10,8 @@ type CollectError struct {
 	Status int
 	Msg    string
 }
+
+var ErrorPkg = new(CollectError)
 
 func (e *CollectError) Error() string {
 	return fmt.Sprintf("%d: %s", e.Code, e.Msg)
@@ -22,4 +26,9 @@ func New(code int, msg string, statusCode int) *CollectError {
 	err.Msg = msg
 	err.Status = statusCode
 	return err
+}
+func (e *CollectError) WithCause(err error) *CollectError {
+	newErr := *e
+	newErr.Raw = err
+	return &newErr
 }
