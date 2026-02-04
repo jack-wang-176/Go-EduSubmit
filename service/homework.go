@@ -45,7 +45,7 @@ func (s *homeworkService) DeleteHomework(title string) error {
 	return nil
 }
 
-func (s *homeworkService) UpdateHomework(id uint, title, des string, department model.Department, deadline time.Time, allow bool, version int) error {
+func (s *homeworkService) UpdateHomework(id uint, updates map[string]interface{}, version int) error {
 
 	h, err := dao.HomeworkDao.GetHomeworkByID(id)
 	if err != nil {
@@ -54,7 +54,7 @@ func (s *homeworkService) UpdateHomework(id uint, title, des string, department 
 
 	h.Version = &version
 
-	err = dao.HomeworkDao.UpdateHomework(h, title, des, department, deadline, allow)
+	err = dao.HomeworkDao.UpdateHomework(h, updates)
 	if err != nil {
 		return pkg.ErrorPkg.WithCause(err)
 	}

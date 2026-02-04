@@ -18,15 +18,17 @@ func (s *submission) CreateSub(c *web.Context) {
 	}
 	if err := c.BindJson(&req); err != nil {
 		SendResponse(c, nil, pkg.ParamError)
+		return
 	}
 
 	user, flag := c.Get("user")
 	if flag {
 		err := service.SubService.CreateSub(user.(string), req.Content)
 		if err != nil {
-			SendResponse(c, nil, pkg.ServerError)
+			SendResponse(c, nil, err)
+			return
 		}
-		SendResponse(c, nil, pkg.Success)
+		SendResponse(c, nil, nil)
 	}
 }
 
@@ -37,13 +39,15 @@ func (s *submission) MySub(c *web.Context) {
 	name, b := c.Get("user")
 	if !b {
 		SendResponse(c, nil, pkg.ServerError)
+		return
 	}
 
-	_, err := service.SubService.MySub(name.(string), page, pageSize)
+	subs, err := service.SubService.MySub(name.(string), page, pageSize)
 	if err != nil {
-		SendResponse(c, nil, pkg.ServerError)
+		SendResponse(c, nil, err)
+		return
 	}
-	SendResponse(c, nil, pkg.Success)
+	SendResponse(c, subs, nil)
 }
 
 func (s *submission) ChangeSub(c *web.Context) {
@@ -57,26 +61,30 @@ func (s *submission) ChangeSub(c *web.Context) {
 
 	if err := c.BindJson(&req); err != nil {
 		SendResponse(c, nil, pkg.ServerError)
+		return
 	}
 
 	user, b := c.Get("user")
 	if !b {
 		SendResponse(c, nil, pkg.ServerError)
+		return
 	}
 	err := service.SubService.ChangeSub(req.Title, user.(string), req.Comment, req.Score, req.IsExcellent)
 	if err != nil {
-		SendResponse(c, nil, pkg.ServerError)
+		SendResponse(c, nil, err)
+		return
 	}
-	SendResponse(c, nil, pkg.Success)
+	SendResponse(c, nil, nil)
 }
 
 func (s *submission) GetExcellentList(c *web.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 
-	_, err := service.SubService.GetExcellentList(page, pageSize)
+	list, err := service.SubService.GetExcellentList(page, pageSize)
 	if err != nil {
-		SendResponse(c, nil, pkg.ServerError)
+		SendResponse(c, nil, err)
+		return
 	}
-	SendResponse(c, nil, pkg.Success)
+	SendResponse(c, list, nil)
 }

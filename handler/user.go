@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"homework_submit/dao"
 	"homework_submit/model"
 	"homework_submit/pkg"
 	"homework_submit/service"
@@ -21,18 +22,30 @@ func (u *user) Login(c *web.Context) {
 	err = c.BindJson(&req)
 	if err != nil {
 		SendResponse(c, nil, pkg.ParamError)
+		return
 	}
 	c.Set("Username", req.Username)
 	access, refresh, err := service.UserService.Login(req.Username, req.Password)
 	if err != nil {
-		SendResponse(c, nil, pkg.ParamError)
+		SendResponse(c, nil, err)
+		return
 	}
 	c.Set("AccessToken", access)
 	c.Set("RefreshToken", refresh)
-	SendResponse(c, map[string]string{
+	user, err := dao.UserDao.GetUserByName(req.Username)
+	if err != nil {
+		SendResponse(c, nil, err)
+		return
+	}
+	if user == nil {
+		SendResponse(c, nil, err)
+		return
+	}
+	SendResponse(c, map[string]interface{}{
 		"access_token":  access,
 		"refresh_token": refresh,
-	}, pkg.Success)
+		"user":          user.ToResponse(),
+	}, nil)
 }
 func (u *user) Register(c *web.Context) {
 	var req struct {
@@ -46,11 +59,12 @@ func (u *user) Register(c *web.Context) {
 	err = c.BindJson(&req)
 	if err != nil {
 		SendResponse(c, nil, pkg.ParamError)
+		return
 	}
 	err = service.UserService.Register(req.Username, req.Password, req.NickName, model.Role(req.Role), model.Department(req.Department))
 	if err != nil {
-		SendResponse(c, nil, pkg.ServerError)
+		SendResponse(c, nil, err)
+		return
 	}
-	SendResponse(c, nil, pkg.Success)
-
+	SendResponse(c, nil, nil)
 }

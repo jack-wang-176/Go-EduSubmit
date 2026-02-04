@@ -3,7 +3,6 @@ package dao
 import (
 	"fmt"
 	"homework_submit/model"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -16,21 +15,19 @@ func (d *homeworkDao) LaunchHomework(h *model.Homework) error {
 	return DB.Create(h).Error
 }
 
-func (d *homeworkDao) UpdateHomework(h *model.Homework, title, des string, department model.Department, deadline time.Time, allow bool) error {
-	tx := DB.Model(h).Where("id = ? AND version = ?", h.ID, h.Version).Updates(map[string]interface{}{
-		"title":       title,
-		"description": des,
-		"allow_late":  allow,
-		"deadline":    deadline,
-		"department":  department,
-		"version":     gorm.Expr("version + 1"),
-	})
+func (d *homeworkDao) UpdateHomework(h *model.Homework, updates map[string]interface{}) error {
+
+	updates["version"] = gorm.Expr("version + 1")
+
+	tx := DB.Model(h).
+		Where("id = ? AND version = ?", h.ID, h.Version).
+		Updates(updates)
 
 	if tx.Error != nil {
 		return tx.Error
 	}
 	if tx.RowsAffected == 0 {
-		return fmt.Errorf("更新失败：数据已被修改或不存在")
+		return fmt.Errorf("更新失败：作业可能已被其他人修改，请刷新后重试")
 	}
 	return nil
 }
