@@ -16,7 +16,7 @@ type ResponseData struct {
 }
 
 func SendResponse(c *web.Context, data any, errs error) {
-	if errs != nil {
+	if errs == nil {
 		err := c.Json(http.StatusOK, ResponseData{
 			Code: 0,
 			Msg:  "success",
@@ -25,6 +25,7 @@ func SendResponse(c *web.Context, data any, errs error) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		return
 	}
 	var e *pkg.CollectError
 	if errors.As(errs, &e) {

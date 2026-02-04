@@ -125,11 +125,13 @@ func (h *homework) UpdateHomework(c *web.Context) {
 func (h *homework) GetHomework(c *web.Context) {
 	query := c.Query("title")
 	homework, err := service.HomeworkService.GetHomework(query)
+	var list *model.HomeworkResponse
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
-	SendResponse(c, homework, nil)
+	list = homework.ToResponse()
+	SendResponse(c, &list, nil)
 }
 func (h *homework) GetHomeworkList(c *web.Context) {
 	pageStr := c.Query("page")

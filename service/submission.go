@@ -28,6 +28,7 @@ func (Sub *submission) CreateSub(creator, title string) error {
 		StudentID:   student.ID,
 		SubmittedAt: time.Now(),
 		IsLate:      homework.Deadline.Before(time.Now()),
+		Department:  student.Department,
 	}
 	err = dao.SubDao.CreateSub(&sub)
 	if err != nil {

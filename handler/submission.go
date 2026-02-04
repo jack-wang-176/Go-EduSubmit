@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"homework_submit/model"
 	"homework_submit/pkg"
 	"homework_submit/service"
 	"strconv"
@@ -47,6 +48,11 @@ func (s *submission) MySub(c *web.Context) {
 		SendResponse(c, nil, err)
 		return
 	}
+	var resSubs []model.SubmissionResponse
+	for _, sub := range *subs.ListSub {
+		resSubs = append(resSubs, *sub.ToResponse())
+	}
+
 	SendResponse(c, subs, nil)
 }
 
@@ -86,5 +92,9 @@ func (s *submission) GetExcellentList(c *web.Context) {
 		SendResponse(c, nil, err)
 		return
 	}
-	SendResponse(c, list, nil)
+	var resSubs []model.SubmissionResponse
+	for _, sub := range *list.ListSub {
+		resSubs = append(resSubs, *sub.ToResponse())
+	}
+	SendResponse(c, resSubs, nil)
 }
