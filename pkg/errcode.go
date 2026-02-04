@@ -27,3 +27,7 @@ var (
 	ErrDepartmentSubNotFound = New(40001, "没有当前部门的提交", http.StatusOK)
 	ErrNoSuchSub             = New(40002, "未找到相应的提交", http.StatusOK)
 )
+
+var (
+	NoInput = New(50001, "没有输入", http.StatusOK)
+)

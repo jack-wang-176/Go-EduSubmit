@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"homework_submit/pkg"
 	"homework_submit/service"
 	"strconv"
 
@@ -16,44 +17,38 @@ func (s *submission) CreateSub(c *web.Context) {
 		Content string `json:"content"`
 	}
 	if err := c.BindJson(&req); err != nil {
-		return
+		SendResponse(c, nil, pkg.ParamError)
 	}
 
-	user, flage := c.Get("user")
-	if flage {
-		err := service.SubService.CreateSub(string(user), req.Content)
+	user, flag := c.Get("user")
+	if flag {
+		err := service.SubService.CreateSub(user.(string), req.Content)
 		if err != nil {
-
-			return
+			SendResponse(c, nil, pkg.ServerError)
 		}
-
+		SendResponse(c, nil, pkg.Success)
 	}
-
 }
 
-func (s *submission) Mysub(c *web.Context) {
+func (s *submission) MySub(c *web.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 
 	name, b := c.Get("user")
 	if !b {
-
-		return
+		SendResponse(c, nil, pkg.ServerError)
 	}
 
-	resp, err := service.SubService.MySub(name, page, pageSize)
+	_, err := service.SubService.MySub(name.(string), page, pageSize)
 	if err != nil {
-
-		return
+		SendResponse(c, nil, pkg.ServerError)
 	}
-
+	SendResponse(c, nil, pkg.Success)
 }
 
 func (s *submission) ChangeSub(c *web.Context) {
-
 	var req struct {
 		Title        string `json:"title"`
-		Name         string `json:"name"`
 		SubmissionID uint   `json:"submission_id"`
 		Score        int    `json:"score"`
 		Comment      string `json:"comment"`
@@ -61,30 +56,27 @@ func (s *submission) ChangeSub(c *web.Context) {
 	}
 
 	if err := c.BindJson(&req); err != nil {
-
-		return
+		SendResponse(c, nil, pkg.ServerError)
 	}
 
 	user, b := c.Get("user")
 	if !b {
-		return
+		SendResponse(c, nil, pkg.ServerError)
 	}
-	err := service.SubService.ChangeSub(req.Title, req.Name, user, req.Comment, req.Score, req.IsExcellent)
+	err := service.SubService.ChangeSub(req.Title, user.(string), req.Comment, req.Score, req.IsExcellent)
 	if err != nil {
-
-		return
+		SendResponse(c, nil, pkg.ServerError)
 	}
-
+	SendResponse(c, nil, pkg.Success)
 }
 
 func (s *submission) GetExcellentList(c *web.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
 	pageSize, _ := strconv.Atoi(c.Query("page_size"))
 
-	resp, err := service.SubService.GetExcellentList(page, pageSize)
+	_, err := service.SubService.GetExcellentList(page, pageSize)
 	if err != nil {
-
-		return
+		SendResponse(c, nil, pkg.ServerError)
 	}
-
+	SendResponse(c, nil, pkg.Success)
 }

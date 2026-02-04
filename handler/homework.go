@@ -2,6 +2,7 @@ package handler
 
 import (
 	"homework_submit/model"
+	"homework_submit/pkg"
 	"homework_submit/service"
 	"strconv"
 	"time"
@@ -23,20 +24,21 @@ func (h *homework) LaunchHomework(c *web.Context) {
 	var err error
 	err = c.BindJson(&req)
 	if err != nil {
-		//todo
+		SendResponse(c, nil, pkg.ServerError)
 	}
 	deadline, err := time.ParseInLocation("2006-01-02 15:04:05", req.Deadline, time.Local)
 	if err != nil {
-		//todo
+		SendResponse(c, nil, pkg.ParamError)
 	}
 	name, b := c.Get("Username")
 	if !b {
-		//todo
+		SendResponse(c, nil, pkg.ServerError)
 	}
-	err = service.HomeworkService.LaunchHomework(req.Title, req.Description, name, req.AllowLate, deadline)
+	err = service.HomeworkService.LaunchHomework(req.Title, req.Description, name.(string), req.AllowLate, deadline)
 	if err != nil {
-		//todo
+		SendResponse(c, nil, pkg.ParamError)
 	}
+	SendResponse(c, nil, pkg.Success)
 }
 func (h *homework) DeleteHomework(c *web.Context) {
 	var err error
@@ -45,24 +47,24 @@ func (h *homework) DeleteHomework(c *web.Context) {
 	}
 	err = c.BindJson(req)
 	if err != nil {
-		//todo
+		SendResponse(c, nil, pkg.ParamError)
 	}
 	name, b := c.Get("Username")
 	if !b {
-		//todo
+		SendResponse(c, nil, pkg.ServerError)
 	}
 	detectUser, err := service.UserService.DetectUser(name.(string))
 	if err != nil {
-
+		SendResponse(c, nil, pkg.ServerError)
 	}
 	if !detectUser {
-
+		SendResponse(c, nil, pkg.ParamError)
 	}
 	err = service.HomeworkService.DeleteHomework(req.Title)
 	if err != nil {
-		//todo
+		SendResponse(c, nil, pkg.ParamError)
 	}
-	c.JsonResp()
+	SendResponse(c, nil, pkg.Success)
 }
 func (h *homework) UpdateHomework(c *web.Context) {
 
@@ -76,15 +78,13 @@ func (h *homework) UpdateHomework(c *web.Context) {
 		Version     int    `json:"version"`    // 乐观锁必须传旧版本号
 	}
 
-	// 2. 绑定参数
 	if err := c.BindJson(&req); err != nil {
-
-		return
+		SendResponse(c, nil, pkg.ParamError)
 	}
 
 	newDeadline, err := time.ParseInLocation("2006-01-02 15:04:05", req.Deadline, time.Local)
 	if err != nil {
-		return
+		SendResponse(c, nil, pkg.ParamError)
 	}
 
 	err = service.HomeworkService.UpdateHomework(
@@ -98,16 +98,17 @@ func (h *homework) UpdateHomework(c *web.Context) {
 	)
 
 	if err != nil {
-		return
+		SendResponse(c, nil, pkg.ParamError)
 	}
-
+	SendResponse(c, nil, pkg.Success)
 }
 func (h *homework) GetHomework(c *web.Context) {
 	query := c.Query("title")
-	getHomework, err := service.HomeworkService.GetHomework(query)
+	_, err := service.HomeworkService.GetHomework(query)
 	if err != nil {
-
+		SendResponse(c, nil, pkg.ServerError)
 	}
+	SendResponse(c, nil, pkg.Success)
 }
 func (h *homework) GetHomeworkList(c *web.Context) {
 	pageStr := c.Query("page")
@@ -117,8 +118,10 @@ func (h *homework) GetHomeworkList(c *web.Context) {
 	page, _ := strconv.Atoi(pageStr)
 	pageSize, _ := strconv.Atoi(pageSizeStr)
 	department, _ := strconv.Atoi(depStr)
-	departmentWork, err := service.HomeworkService.GetDepartmentWork(department, page, pageSize)
+	depart := model.Department(department)
+	_, err := service.HomeworkService.GetDepartmentWork(depart, page, pageSize)
 	if err != nil {
-
+		SendResponse(c, nil, pkg.ServerError)
 	}
+	SendResponse(c, nil, pkg.Success)
 }
