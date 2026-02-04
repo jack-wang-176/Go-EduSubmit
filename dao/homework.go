@@ -16,8 +16,6 @@ func (d *homeworkDao) LaunchHomework(h *model.Homework) error {
 	return DB.Create(h).Error
 }
 
-// dao/homework.go
-
 func (d *homeworkDao) UpdateHomework(h *model.Homework, title, des string, department model.Department, deadline time.Time, allow bool) error {
 	tx := DB.Model(h).Where("id = ? AND version = ?", h.ID, h.Version).Updates(map[string]interface{}{
 		"title":       title,
@@ -61,16 +59,16 @@ func (d *homeworkDao) GetHomeworkByDepartment(department model.Department, page,
 	var total int64
 	query := DB.Model(&model.Homework{}).Where("Department = ?", department)
 	if query.Error != nil {
-		//TODO
+		return nil, 0, query.Error
 	}
 	tx := query.Count(&total)
 	if tx.Error != nil {
-		//TODO
+		return nil, 0, tx.Error
 	}
 	offset := (page - 1) * pageSize
 	err := query.Preload("Homework").Preload("Student").Offset(offset).Limit(pageSize).Find(&homeworks).Error
 	if err != nil {
-		//TODO
+		return nil, 0, err
 	}
 	return homeworks, total, nil
 }

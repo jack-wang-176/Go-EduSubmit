@@ -18,7 +18,7 @@ func (Sub *submission) CreateSub(creator, title string) error {
 	}
 	homework, err := dao.HomeworkDao.GetHomeworkByTitle(title)
 	if err != nil {
-		return pkg.ErrorPkg.WithCause(err)
+		return pkg.ErrHomeworkNotFound
 	}
 	if !homework.AllowLate && homework.Deadline.Before(time.Now()) {
 		return pkg.ErrAlreadyLate
@@ -45,19 +45,19 @@ func (Sub *submission) MySub(name string, page, pageSize int) (*model.PageRespon
 		Page:     page,
 		ListSub:  subs,
 		PageSize: pageSize,
-	}, err
+	}, nil
 }
 func (Sub *submission) DepartmentSub(department model.Department) (*[]model.Submission, error) {
 	subs, err := dao.SubDao.DepartmentSubs(department)
 	if err != nil {
-		return nil, pkg.ErrorPkg.WithCause(err)
+		return nil, pkg.ErrDepartmentSubNotFound
 	}
-	return subs, err
+	return subs, nil
 }
-func (Sub *submission) ChangeSub(title, name, reviewer, comment string, score, excellent int) error {
+func (Sub *submission) ChangeSub(name, reviewer, comment string, score, excellent int) error {
 	sub, err := dao.SubDao.GetSub(name, reviewer)
 	if err != nil {
-		return pkg.ErrorPkg.WithCause(err)
+		return pkg.ErrNoSuchSub
 	}
 	err = dao.SubDao.ChangeSub(sub, reviewer, score, comment, excellent)
 	if err != nil {

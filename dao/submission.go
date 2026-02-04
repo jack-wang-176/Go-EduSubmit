@@ -25,9 +25,9 @@ func (Sub *submission) MySubs(my string, page, pageSize int) (*[]model.Submissio
 	if err != nil {
 		return nil, 0, err
 	}
-	query := DB.Model(&model.Submission{}).Where("CreatorID = ?", me)
+	query := DB.Model(&model.Submission{}).Where("CreatorID = ?", me.ID)
 	if query.Count(&total).Error != nil {
-		//TODO
+		return nil, 0, err
 	}
 	offset := (page - 1) * pageSize
 	query.Preload("Homework").Preload("Student").Offset(offset).Limit(pageSize).Find(&s)

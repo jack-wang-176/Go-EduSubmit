@@ -15,7 +15,7 @@ var UserService = new(userService)
 
 func (u *userService) Register(username, password, nickname string, role model.Role, dept model.Department) error {
 	already, err := dao.UserDao.GetUserByName(username)
-	if already == nil || err != nil {
+	if already != nil || err != nil {
 		return pkg.ErrUserExists
 	}
 	harsh, err := pkg.PasswordHarsh(password)

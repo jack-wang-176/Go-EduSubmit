@@ -53,7 +53,7 @@ func TokenCreate(user *model.User) (accessToken string, refreshToken string, err
 	refreshClaim := tokenClaim{
 		UserID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(now.Add(time.Minute * 10)),
+			ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour * 24)),
 			IssuedAt:  jwt.NewNumericDate(now),
 		},
 	}

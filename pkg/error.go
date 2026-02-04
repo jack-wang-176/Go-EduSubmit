@@ -5,10 +5,10 @@ import (
 )
 
 type CollectError struct {
-	Raw    error
-	Code   int
-	Status int
-	Msg    string
+	Code   int    `json:"code"`
+	Msg    string `json:"msg"`
+	Status int    `json:"-"`
+	Raw    error  `json:"-"`
 }
 
 var ErrorPkg = new(CollectError)
