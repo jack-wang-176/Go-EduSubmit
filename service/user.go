@@ -54,7 +54,6 @@ func (u *userService) Login(username, password string) (string, string, error) {
 	if !matched {
 		return "", "", pkg.ErrPasswordIncorrect
 	}
-
 	return pkg.TokenCreate(user)
 }
 func (u *userService) DetectUser(username string) (bool, error) {

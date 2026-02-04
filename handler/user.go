@@ -24,7 +24,8 @@ func (u *user) Login(c *web.Context) {
 		SendResponse(c, nil, pkg.ParamError)
 		return
 	}
-	c.Set("Username", req.Username)
+	c.Set("user", req.Username)
+
 	access, refresh, err := service.UserService.Login(req.Username, req.Password)
 	if err != nil {
 		SendResponse(c, nil, err)
