@@ -73,6 +73,7 @@ func (s *submission) ChangeSub(c *web.Context) {
 		Score       int    `json:"score"`
 		Comment     string `json:"comment"`
 		IsExcellent int    `json:"is_excellent"`
+		Version     int    `json:"version"`
 	}
 	if err := c.BindJson(&req); err != nil {
 		SendResponse(c, nil, pkg.ParamError)
@@ -85,7 +86,7 @@ func (s *submission) ChangeSub(c *web.Context) {
 		return
 	}
 
-	err = service.SubService.ChangeSub(uint(subID), reviewer.(string), req.Comment, req.Score, req.IsExcellent)
+	err = service.SubService.ChangeSub(uint(subID), reviewer.(string), req.Comment, req.Score, req.IsExcellent, req.Version)
 	if err != nil {
 		SendResponse(c, nil, err)
 		return

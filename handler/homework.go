@@ -131,14 +131,29 @@ func (h *homework) UpdateHomework(c *web.Context) {
 }
 func (h *homework) GetHomework(c *web.Context) {
 	query := c.Query("title")
+	param, err2 := c.Param("id")
+	parseUint, err2 := strconv.ParseUint(param, 10, 64)
+	if err2 != nil {
+		SendResponse(c, nil, pkg.ParamError)
+	}
+	if err2 != nil {
+		SendResponse(c, nil, pkg.ParamError)
+	}
 	homework, err := service.HomeworkService.GetHomework(query)
 	var list *model.HomeworkResponse
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
+	sub, err2 := service.HomeworkService.DetectSub(homework, uint(parseUint))
+	if err2 != nil {
+		SendResponse(c, nil, pkg.ErrorPkg.WithCause(err2))
+	}
 	list = homework.ToResponse()
-	SendResponse(c, &list, nil)
+	SendResponse(c, map[string]interface{}{
+		"homework":      &list,
+		"my_submission": sub,
+	}, nil)
 }
 func (h *homework) GetHomeworkList(c *web.Context) {
 	pageStr := c.Query("page")

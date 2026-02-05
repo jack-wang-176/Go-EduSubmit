@@ -28,6 +28,8 @@ var (
 var (
 	ErrDepartmentSubNotFound = New(40001, "没有当前部门的提交", http.StatusOK)
 	ErrNoSuchSub             = New(40002, "未找到相应的提交", http.StatusOK)
+	ErrWrongHomeID           = New(40003, "对应的作业没有提交", http.StatusOK)
+	ErrSubBeChanged          = New(40004, "对应的提交已经被其他人修改", http.StatusOK)
 )
 
 var (

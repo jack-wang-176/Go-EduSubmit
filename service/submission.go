@@ -23,6 +23,9 @@ func (Sub *submission) CreateSub(creator, title string) error {
 	if !homework.AllowLate && homework.Deadline.Before(time.Now()) {
 		return pkg.ErrAlreadyLate
 	}
+	if student.ID != homework.ID {
+		return pkg.ErrWrongDepartment
+	}
 	sub := model.Submission{
 		HomeworkID:  homework.ID,
 		StudentID:   student.ID,
@@ -56,10 +59,13 @@ func (Sub *submission) DepartmentSub(department model.Department) (*[]model.Subm
 	return subs, nil
 }
 
-func (Sub *submission) ChangeSub(subID uint, reviewer, comment string, score, excellent int) error {
+func (Sub *submission) ChangeSub(subID uint, reviewer, comment string, score, excellent, version int) error {
 	sub, err := dao.SubDao.GetSubByID(subID)
 	if err != nil {
 		return pkg.ErrNoSuchSub
+	}
+	if sub.Version != &version {
+		return pkg.ErrSubBeChanged
 	}
 	user, err := dao.UserDao.GetUserByName(reviewer)
 	if err != nil {
@@ -88,6 +94,9 @@ func (Sub *submission) GetWorkSubs(id uint64, page, pageSize int, dept model.Dep
 	subs, total, err := dao.SubDao.GetSubByHomeId(id, page, pageSize)
 	if err != nil {
 		return nil, pkg.ErrorPkg.WithCause(err)
+	}
+	if len(subs) == 0 {
+		return nil, pkg.ErrWrongHomeID
 	}
 	var flag = subs[0].Department == dept
 	if flag {

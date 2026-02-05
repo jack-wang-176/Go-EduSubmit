@@ -5,7 +5,6 @@ import (
 	"homework_submit/model"
 	"homework_submit/pkg"
 	"homework_submit/service"
-	"time"
 
 	"github.com/jack-wang-176/Maple/web"
 )
@@ -19,33 +18,19 @@ func (u *user) Login(c *web.Context) {
 		Username string `json:"username"`
 		Password string `json:"password"`
 	}
-	var err error
-	err = c.BindJson(&req)
-	if err != nil {
+
+	if err := c.BindJson(&req); err != nil {
 		SendResponse(c, nil, pkg.ParamError)
 		return
 	}
-	c.Set("user", req.Username)
 
 	access, refresh, err := service.UserService.Login(req.Username, req.Password)
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
-	user, err := dao.UserDao.GetUserByName(req.Username)
-	if err != nil {
-		SendResponse(c, nil, err)
-		return
-	}
-	if user == nil {
-		SendResponse(c, nil, err)
-		return
-	}
-	expiresAt := time.Now().Add(7 * 24 * time.Hour)
-	err = service.UserService.CreateRefresh(user.ID, user.Name, refresh, expiresAt)
-	if err != nil {
-		SendResponse(c, nil, err)
-	}
+
+	user, _ := dao.UserDao.GetUserByName(req.Username)
 	SendResponse(c, map[string]interface{}{
 		"access_token":  access,
 		"refresh_token": refresh,

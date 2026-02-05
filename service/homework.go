@@ -86,3 +86,10 @@ func (s *homeworkService) GetHomeworkId(id uint) (*model.Homework, error) {
 	}
 	return h, nil
 }
+func (s *homeworkService) DetectSub(homework *model.Homework, user uint) (bool, error) {
+	sub, err := dao.SubDao.DetectSub(homework, user)
+	if err != nil {
+		return false, pkg.ErrorPkg.WithCause(err)
+	}
+	return sub, nil
+}
