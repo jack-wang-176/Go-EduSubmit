@@ -20,35 +20,27 @@ func Router() *web.HttpService {
 	authGroup.Use(middleware.AccessTokenDeal)
 	{
 
-		authGroup.GET("/submission/excellent", handler.Sub.GetExcellentList) // 查看优秀作业
+		authGroup.GET("/submission/excellent", handler.Sub.GetExcellentList)
 
 		student := authGroup.Group("/student")
 
 		student.Use(middleware.CheckStudent)
 		{
-			// 提交作业
 			student.POST("/create", handler.Sub.CreateSub)
-			// 查看我的提交
 			student.GET("/my", handler.Sub.MySub)
-			// 注意：ChangeSub (批改) 不应该在学生组，学生不能改分！
 		}
 
-		// --- 管理员接口 (Admin Group) ---
 		admin := authGroup.Group("/admin")
-		// 嵌入角色检查：只允许 Admin
 		admin.Use(middleware.CheckAdmin)
 		{
 			// 作业管理
 			admin.POST("/create", handler.HomeworkHandler.LaunchHomework)
-			admin.POST("/delete", handler.HomeworkHandler.DeleteHomework) // 建议改为 DELETE 方法
-			admin.POST("/update", handler.HomeworkHandler.UpdateHomework) // 建议改为 PUT 方法
+			admin.POST("/delete", handler.HomeworkHandler.DeleteHomework)
+			admin.POST("/update", handler.HomeworkHandler.UpdateHomework)
 
-			// 作业查看
 			admin.GET("/get", handler.HomeworkHandler.GetHomework)
 			admin.GET("/list", handler.HomeworkHandler.GetHomeworkList)
 
-			// 【关键修正】批改作业 (ChangeSub) 应该在这里
-			// 只有管理员(老登)才能批改、打分、标记优秀
 			admin.POST("/change", handler.Sub.ChangeSub)
 		}
 	}
