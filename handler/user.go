@@ -31,8 +31,6 @@ func (u *user) Login(c *web.Context) {
 		SendResponse(c, nil, err)
 		return
 	}
-	c.Set("AccessToken", access)
-	c.Set("RefreshToken", refresh)
 	user, err := dao.UserDao.GetUserByName(req.Username)
 	if err != nil {
 		SendResponse(c, nil, err)
@@ -68,4 +66,13 @@ func (u *user) Register(c *web.Context) {
 		return
 	}
 	SendResponse(c, nil, nil)
+}
+func (u *user) RefreshToken(c *web.Context) {
+	var req struct {
+		RefreshToken string `json:"refresh_token" binding:"required"`
+	}
+	if err := c.BindJson(&req); err != nil {
+		SendResponse(c, nil, pkg.ParamError)
+	}
+
 }

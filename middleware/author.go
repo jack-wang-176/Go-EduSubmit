@@ -8,7 +8,7 @@ import (
 	"github.com/jack-wang-176/Maple/web"
 )
 
-func RoleCheck(c *web.Context) {
+func CheckAdmin(c *web.Context) {
 	user, flag := c.Get("user")
 	if !flag || user == nil {
 		handler.SendResponse(c, nil, pkg.ServerError)
@@ -21,6 +21,25 @@ func RoleCheck(c *web.Context) {
 	}
 
 	if !detectUser {
+		handler.SendResponse(c, nil, pkg.ErrUserNotAdmin)
+		c.Abort()
+		return
+	}
+	c.Next()
+}
+func CheckStudent(c *web.Context) {
+	user, flag := c.Get("user")
+	if !flag || user == nil {
+		handler.SendResponse(c, nil, pkg.ServerError)
+		return
+	}
+	detectUser, err := service.UserService.DetectUser(user.(string))
+	if err != nil {
+		handler.SendResponse(c, nil, err)
+		return
+	}
+
+	if detectUser {
 		handler.SendResponse(c, nil, pkg.ErrUserNotAdmin)
 		c.Abort()
 		return

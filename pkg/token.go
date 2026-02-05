@@ -23,7 +23,7 @@ var (
 //	Department Department `gorm:"type:tinyint;not null;default:1;comment:1=Backend..." json:"department"`
 //}
 
-type tokenClaim struct {
+type TokenClaim struct {
 	UserID     uint             `gorm:"not null;unique" json:"user_id"`
 	Name       string           `gorm:"type:varchar(50);not null;unique" json:"name"`
 	Email      string           `gorm:"type:varchar(100);not null;unique" json:"email"`
@@ -34,7 +34,7 @@ type tokenClaim struct {
 
 func TokenCreate(user *model.User) (accessToken string, refreshToken string, err error) {
 	now := time.Now()
-	accessClaim := tokenClaim{
+	accessClaim := TokenClaim{
 		UserID:     user.ID,
 		Name:       user.Name,
 		Email:      user.Email,
@@ -50,10 +50,10 @@ func TokenCreate(user *model.User) (accessToken string, refreshToken string, err
 	if err != nil {
 		return "", "", err
 	}
-	refreshClaim := tokenClaim{
+	refreshClaim := TokenClaim{
 		UserID: user.ID,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour * 24)),
+			ExpiresAt: jwt.NewNumericDate(now.Add(7 * 24 * time.Hour)),
 			IssuedAt:  jwt.NewNumericDate(now),
 		},
 	}
@@ -64,4 +64,25 @@ func TokenCreate(user *model.User) (accessToken string, refreshToken string, err
 	}
 	return accessToken, refreshToken, nil
 
+}
+func ParseAccessToken(TokenString string) (claim *TokenClaim, err error) {
+	return parseToken(TokenString, AccessSecret)
+}
+func ParseRefreshToken(TokenString string) (claim *TokenClaim, err error) {
+	return parseToken(TokenString, RefreshSecret)
+}
+func parseToken(tokenString string, secret []byte) (*TokenClaim, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &TokenClaim{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return secret, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	if claims, ok := token.Claims.(*TokenClaim); ok && token.Valid {
+		return claims, nil
+	}
+	return nil, fmt.Errorf("invalid token")
 }

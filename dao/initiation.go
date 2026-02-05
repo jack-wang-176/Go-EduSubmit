@@ -17,7 +17,7 @@ func InitDb() error {
 	if err != nil {
 		return err
 	}
-	err = DB.AutoMigrate(&model.Homework{}, &model.Submission{}, &model.User{})
+	err = DB.AutoMigrate(&model.Homework{}, &model.Submission{}, &model.User{}, &model.RefreshToken{})
 	if err != nil {
 		return err
 	}
