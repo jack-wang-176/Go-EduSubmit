@@ -17,7 +17,7 @@ func Router() *web.HttpService {
 		userGroup.POST("/refresh", handler.Token.RefreshToken)
 	}
 
-	authGroup := r.Group("/")
+	authGroup := r.Group("")
 	authGroup.Use(middleware.AccessTokenDeal) // 全局 JWT 校验
 	{
 
@@ -27,11 +27,11 @@ func Router() *web.HttpService {
 		// 作业模块 (Homework)
 		homework := authGroup.Group("/homework")
 		{
-			homework.GET("", handler.HomeworkHandler.GetHomeworkList)
+			homework.GET("/", handler.HomeworkHandler.GetHomeworkList)
 			homework.GET("/:id", handler.HomeworkHandler.GetHomework)
 
 			// 管理员专属
-			homework.POST("", middleware.CheckAdmin, handler.HomeworkHandler.LaunchHomework)
+			homework.POST("/", middleware.CheckAdmin, handler.HomeworkHandler.LaunchHomework)
 			homework.PUT("/:id", middleware.CheckAdmin, handler.HomeworkHandler.UpdateHomework)
 			homework.DELETE("/:id", middleware.CheckAdmin, handler.HomeworkHandler.DeleteHomework)
 		}
@@ -40,7 +40,7 @@ func Router() *web.HttpService {
 		{
 			submission.GET("/excellent", handler.Sub.GetExcellentList)
 
-			submission.POST("", middleware.CheckStudent, handler.Sub.CreateSub)
+			submission.POST("/", middleware.CheckStudent, handler.Sub.CreateSub)
 			submission.GET("/my", middleware.CheckStudent, handler.Sub.MySub)
 
 			submission.GET("/homework/:id", middleware.CheckAdmin, handler.Sub.GetWorkSubs)

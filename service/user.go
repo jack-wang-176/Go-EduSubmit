@@ -14,14 +14,21 @@ type userService struct{}
 
 var UserService = new(userService)
 
-func (u *userService) Register(username, password, nickname string, role model.Role, dept model.Department) error {
+func (u *userService) Register(username, password, nickname string, role model.Role, dept model.Department) (*model.User, error) {
 	already, err := dao.UserDao.GetUserByName(username)
-	if already != nil || err != nil {
-		return pkg.ErrUserExists
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, pkg.ErrorPkg.WithCause(err)
+		}
+		// 如果是 ErrRecordNotFound，说明用户不存在，可以继续执行注册逻辑，这里什么都不做，跳过即可
+	} else {
+		if already != nil {
+			return nil, pkg.ErrUserExists
+		}
 	}
 	harsh, err := pkg.PasswordHarsh(password)
 	if err != nil {
-		return pkg.ErrPasswordIncorrect
+		return nil, pkg.ErrPasswordIncorrect
 	}
 	user := &model.User{
 		Name:       username,
@@ -30,11 +37,11 @@ func (u *userService) Register(username, password, nickname string, role model.R
 		Role:       role,
 		Department: dept,
 	}
-	err = dao.UserDao.CreateUser(user)
+	user, err = dao.UserDao.CreateUser(user)
 	if err != nil {
-		return pkg.ErrorPkg.WithCause(err)
+		return nil, pkg.ErrorPkg.WithCause(err)
 	}
-	return nil
+	return user, nil
 }
 func (u *userService) Login(username, password string) (string, string, error) {
 	user, err := dao.UserDao.GetUserByName(username)

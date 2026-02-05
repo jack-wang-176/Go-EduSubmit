@@ -23,10 +23,24 @@ const (
 	Ios
 )
 
+var Depart = map[string]Department{
+	"Backend":  Backend,
+	"Frontend": Frontend,
+	"Sre":      Sre,
+	"Product":  Product,
+	"Design":   Design,
+	"Android":  Android,
+	"IOS":      Ios,
+}
+var Roles = map[string]Role{
+	"student": Student,
+	"admin":   Admin,
+}
+
 type User struct {
 	gorm.Model
 	Name       string     `gorm:"type:varchar(50);not null;unique" json:"name"`
-	Email      string     `gorm:"type:varchar(100);not null;unique" json:"email"`
+	Email      *string    `gorm:"unique;type:varchar(100)" json:"email"`
 	Password   string     `gorm:"type:varchar(255);not null" json:"-"`
 	Nickname   string     `gorm:"type:varchar(50);not null" json:"nickname"`
 	Role       Role       `gorm:"type:tinyint;not null;default:1;comment:1=Student,2=Admin" json:"role"`
@@ -36,7 +50,7 @@ type User struct {
 type Homework struct {
 	gorm.Model
 	Title       string     `gorm:"type:varchar(200);not null;unique" json:"title"`
-	Description string     `gorm:"type:text;default:nil" json:"description"`
+	Description string     `gorm:"type:text" json:"description"`
 	CreatorID   uint       `gorm:"not null" json:"creator_id"`
 	Deadline    time.Time  `gorm:"not null" json:"deadline"`
 	AllowLate   bool       `gorm:"not null;default:false" json:"allow_late"`

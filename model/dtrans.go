@@ -1,7 +1,6 @@
 package model
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -27,16 +26,13 @@ var (
 )
 
 type UserResponse struct {
-	ID              uint `json:"id"`
-	CreatedAt       time.Time
-	UpdatedAt       time.Time
-	DeletedAt       sql.NullTime `gorm:"index"`
-	Username        string       `json:"username"`
-	Nickname        string       `json:"nickname"`
-	Role            string       `json:"role"`
-	Department      string       `json:"department"`
-	DepartmentLabel string       `json:"department_label"`
-	Email           string       `json:"email,omitempty"`
+	ID              uint   `json:"id"`
+	Username        string `json:"username"`
+	Nickname        string `json:"nickname"`
+	Role            string `json:"role"`
+	Department      string `json:"department"`
+	DepartmentLabel string `json:"department_label"`
+	Email           string `json:"email,omitempty"`
 }
 
 func (u *User) ToResponse() *UserResponse {
@@ -44,7 +40,10 @@ func (u *User) ToResponse() *UserResponse {
 	if u.Role == Admin {
 		roleStr = "admin"
 	}
-
+	var emailStr string
+	if u.Email != nil {
+		emailStr = *u.Email
+	}
 	return &UserResponse{
 		ID:              u.ID,
 		Username:        u.Name,
@@ -52,7 +51,7 @@ func (u *User) ToResponse() *UserResponse {
 		Role:            roleStr,
 		Department:      DeptNameMap[u.Department],
 		DepartmentLabel: DeptLabelMap[u.Department],
-		Email:           u.Email,
+		Email:           emailStr,
 	}
 }
 

@@ -42,8 +42,8 @@ func (u *user) Register(c *web.Context) {
 		Username   string `json:"username"`
 		Password   string `json:"password"`
 		NickName   string `json:"nickname"`
-		Department int8   `json:"department"`
-		Role       int8   `json:"role"`
+		Department string `json:"department"`
+		Role       string `json:"role"`
 	}
 	var err error
 	err = c.BindJson(&req)
@@ -52,12 +52,14 @@ func (u *user) Register(c *web.Context) {
 		return
 	}
 
-	err = service.UserService.Register(req.Username, req.Password, req.NickName, model.Role(req.Role), model.Department(req.Department))
+	department := model.Depart[req.Department]
+	role := model.Roles[req.Role]
+	theUser, err := service.UserService.Register(req.Username, req.Password, req.NickName, role, department)
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
-	SendResponse(c, nil, nil)
+	SendResponse(c, theUser.ToResponse(), nil)
 }
 func (u *user) RefreshToken(c *web.Context) {
 	var req struct {

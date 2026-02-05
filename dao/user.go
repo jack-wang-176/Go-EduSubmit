@@ -6,8 +6,12 @@ type userDao struct{}
 
 var UserDao = new(userDao)
 
-func (d *userDao) CreateUser(u *model.User) error {
-	return DB.Create(u).Error
+func (d *userDao) CreateUser(u *model.User) (*model.User, error) {
+	tx := DB.Create(u)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return u, nil
 }
 func (d *userDao) DeleteUser(u *model.User) error {
 	return DB.Delete(u).Error
