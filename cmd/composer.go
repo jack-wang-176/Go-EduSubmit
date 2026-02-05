@@ -11,7 +11,7 @@ func composer() {
 		panic(err)
 	}
 	service := router.Router()
-	err := service.Start(":8080")
+	err = service.Start(":8080")
 	if err != nil {
 		panic(err)
 	}

@@ -55,16 +55,21 @@ func (Sub *submission) DepartmentSub(department model.Department) (*[]model.Subm
 	}
 	return subs, nil
 }
-func (Sub *submission) ChangeSub(name, reviewer, comment string, score, excellent int) error {
-	sub, err := dao.SubDao.GetSub(name, reviewer)
+
+func (Sub *submission) ChangeSub(subID uint, reviewer, comment string, score, excellent int) error {
+	sub, err := dao.SubDao.GetSubByID(subID)
 	if err != nil {
 		return pkg.ErrNoSuchSub
 	}
-	err = dao.SubDao.ChangeSub(sub, reviewer, score, comment, excellent)
+	user, err := dao.UserDao.GetUserByName(reviewer)
 	if err != nil {
-		return pkg.ErrorPkg.WithCause(err)
+		return pkg.ErrUserNotFound
 	}
-	return nil
+	if user.Department != sub.Department {
+		return pkg.ErrWrongDepartment
+	}
+	err = dao.SubDao.ChangeSub(sub, reviewer, score, comment, excellent)
+	return err
 }
 func (Sub *submission) GetExcellentList(page, pageSize int) (*model.PageResponse, error) {
 	subs, total, err := dao.SubDao.GetExcellentList(page, pageSize)
@@ -72,9 +77,43 @@ func (Sub *submission) GetExcellentList(page, pageSize int) (*model.PageResponse
 		return nil, pkg.ErrorPkg.WithCause(err)
 	}
 	return &model.PageResponse{
-		ListHomework: &subs,
-		Total:        total,
-		Page:         page,
-		PageSize:     pageSize,
+		ListSub:  &subs,
+		Total:    total,
+		Page:     page,
+		PageSize: pageSize,
 	}, nil
+}
+func (Sub *submission) GetWorkSubs(id uint64, page, pageSize int, dept model.Department) (*model.PageResponse, error) {
+
+	subs, total, err := dao.SubDao.GetSubByHomeId(id, page, pageSize)
+	if err != nil {
+		return nil, pkg.ErrorPkg.WithCause(err)
+	}
+	var flag = subs[0].Department == dept
+	if flag {
+		return &model.PageResponse{
+			ListSub:  &subs,
+			Page:     page,
+			PageSize: pageSize,
+			Total:    total,
+		}, nil
+	} else {
+		return nil, pkg.ErrWrongDepartment
+	}
+
+}
+func (Sub *submission) MarkExcellent(subID uint, reviewer string) error {
+	sub, err := dao.SubDao.GetSubByID(subID)
+	if err != nil {
+		return pkg.ErrNoSuchSub
+	}
+	user, err := dao.UserDao.GetUserByName(reviewer)
+	if err != nil {
+		return pkg.ErrUserNotFound
+	}
+	if user.Department != sub.Department {
+		return pkg.ErrWrongDepartment
+	}
+	err = dao.SubDao.MarkExcellent(sub, reviewer)
+	return err
 }

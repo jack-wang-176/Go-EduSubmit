@@ -15,6 +15,8 @@ var (
 	ErrPasswordIncorrect = New(20002, "密码错误", http.StatusOK)
 	ErrUserExists        = New(20003, "用户已存在", http.StatusOK)
 	ErrUserNotAdmin      = New(20004, "用户没有管理员权限", http.StatusOK)
+	ErrDeleteUserFailed  = New(20005, "删除用户失败", http.StatusOK)
+	ErrWrongDepartment   = New(20006, "你没有这个部门的权限", http.StatusOK)
 )
 
 var (

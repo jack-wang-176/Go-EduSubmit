@@ -34,7 +34,7 @@ func (Sub *submission) MySubs(my string, page, pageSize int) (*[]model.Submissio
 	if query.Error != nil {
 		return nil, 0, query.Error
 	}
-	return &s, 0, nil
+	return &s, total, nil
 }
 func (Sub *submission) DepartmentSubs(department model.Department) (*[]model.Submission, error) {
 	var s []model.Submission
@@ -51,6 +51,21 @@ func (Sub *submission) ChangeSub(s *model.Submission, reviewer string, score int
 		"Score":     score,
 		"Comment":   comment,
 		"excellent": ex,
+		"version":   gorm.Expr("Version + 1"),
+		"reviewer":  reviewer,
+	})
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("Sub Already be changed ")
+	}
+	return nil
+}
+func (Sub *submission) MarkExcellent(s *model.Submission, reviewer string) error {
+
+	result := DB.Model(s).Where("Version = ?", s.Version).Updates(map[string]interface{}{
+		"excellent": true,
 		"version":   gorm.Expr("Version + 1"),
 		"reviewer":  reviewer,
 	})
@@ -79,18 +94,41 @@ func (Sub *submission) GetSub(title, name string) (*model.Submission, error) {
 	}
 	return &sub, nil
 }
-func (Sub *submission) GetExcellentList(page, pageSize int) ([]model.Homework, int64, error) {
-	var s []model.Homework
+func (Sub *submission) GetExcellentList(page, pageSize int) ([]model.Submission, int64, error) {
+	var submissions []model.Submission
 	var total int64
-	query := DB.Model(&model.Homework{}).Where("isExcellent = ?", true)
-	tx := query.Count(&total)
-	if tx.Error != nil {
-		//TODO
+	query := DB.Model(&model.Submission{}).Where("is_excellent = ?", true)
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * pageSize
+
+	err := query.Preload("Homework").Preload("Student").
+		Offset(offset).Limit(pageSize).
+		Find(&submissions).Error
+
+	return submissions, total, err
+}
+func (Sub *submission) GetSubByID(id uint) (*model.Submission, error) {
+	var sub model.Submission
+	if err := DB.First(&sub, id).Error; err != nil {
+		return nil, err
+	}
+	return &sub, nil
+}
+func (Sub *submission) GetSubByHomeId(id uint64, page, pageSize int) ([]model.Submission, int64, error) {
+	var subs []model.Submission
+	var total int64
+	query := DB.Model(&model.Submission{}).Where("homework_id = ?", id)
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
 	}
 	offset := (page - 1) * pageSize
-	err := query.Preload("Homework").Preload("Student").Offset(offset).Limit(pageSize).Find(&s).Error
+	err := query.Preload("Student").Offset(offset).Limit(pageSize).Find(&subs).Error
 	if err != nil {
-		//TODO
+		return nil, 0, err
 	}
-	return s, total, nil
+	return subs, total, nil
 }

@@ -79,3 +79,10 @@ func (s *homeworkService) GetDepartmentWork(department model.Department, page, p
 		Page:         page,
 	}, nil
 }
+func (s *homeworkService) GetHomeworkId(id uint) (*model.Homework, error) {
+	h, err := dao.HomeworkDao.GetHomeworkByID(id)
+	if err != nil {
+		return nil, pkg.ErrHomeworkNotFound
+	}
+	return h, nil
+}

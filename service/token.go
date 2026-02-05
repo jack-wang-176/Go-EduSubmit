@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (s *userService) RefreshToken(oldRefreshToken string) (newAccess string, newRefresh string, err error) {
+func (u *userService) RefreshToken(oldRefreshToken string) (newAccess string, newRefresh string, err error) {
 
 	claims, err := pkg.ParseRefreshToken(oldRefreshToken)
 	if err != nil {

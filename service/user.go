@@ -5,6 +5,7 @@ import (
 	"homework_submit/dao"
 	"homework_submit/model"
 	"homework_submit/pkg"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -62,4 +63,30 @@ func (u *userService) DetectUser(username string) (bool, error) {
 		return false, err
 	}
 	return role, nil
+}
+func (u *userService) CreateRefresh(id uint, name, refreshToken string, expiresAt time.Time) error {
+	err := dao.Refresh.Create(id, name, refreshToken, expiresAt)
+	if err != nil {
+		return pkg.ErrorPkg.WithCause(err)
+	}
+	return nil
+}
+func (u *userService) GetProfile(id uint) (*model.UserResponse, error) {
+	user, err := dao.UserDao.GetUserById(id)
+	if err != nil {
+		return nil, pkg.ErrUserNotFound
+	}
+	return user.ToResponse(), nil
+}
+
+func (u *userService) DeleteAccount(name string, password string) error {
+	user, err := dao.UserDao.GetUserByName(name)
+	if err != nil {
+		return pkg.ErrUserNotFound
+	}
+
+	if !pkg.DetectPasswordHarsh(password, user.Password) {
+		return pkg.ErrPasswordIncorrect
+	}
+	return dao.UserDao.DeleteUser(user)
 }

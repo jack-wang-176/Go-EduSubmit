@@ -49,7 +49,7 @@ func (h *homework) DeleteHomework(c *web.Context) {
 	var req struct {
 		Title string `json:"title"`
 	}
-	err = c.BindJson(req)
+	err = c.BindJson(&req)
 	if err != nil {
 		SendResponse(c, nil, pkg.ParamError)
 		return
@@ -78,7 +78,6 @@ func (h *homework) DeleteHomework(c *web.Context) {
 
 func (h *homework) UpdateHomework(c *web.Context) {
 	var req struct {
-		ID          uint              `json:"id"`
 		Title       *string           `json:"title"`
 		Description *string           `json:"description"`
 		Deadline    *string           `json:"deadline"`
@@ -86,7 +85,15 @@ func (h *homework) UpdateHomework(c *web.Context) {
 		Department  *model.Department `json:"department"`
 		Version     int               `json:"version"`
 	}
-
+	idStr, err := c.Param("id")
+	if err != nil {
+		SendResponse(c, nil, pkg.ParamError)
+	}
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		SendResponse(c, nil, pkg.ParamError)
+		return
+	}
 	if err := c.BindJson(&req); err != nil {
 		SendResponse(c, nil, pkg.ParamError)
 		return
@@ -114,7 +121,7 @@ func (h *homework) UpdateHomework(c *web.Context) {
 		}
 		updates["deadline"] = t
 	}
-	err := service.HomeworkService.UpdateHomework(req.ID, updates, req.Version)
+	err = service.HomeworkService.UpdateHomework(uint(id), updates, req.Version)
 
 	if err != nil {
 		SendResponse(c, nil, err)
