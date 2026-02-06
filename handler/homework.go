@@ -142,7 +142,7 @@ func (h *homework) UpdateHomework(c *web.Context) {
 	SendResponse(c, nil, nil)
 }
 func (h *homework) GetHomework(c *web.Context) {
-	query := c.Query("title")
+
 	param, err2 := c.Param("id")
 	parseUint, err2 := strconv.ParseUint(param, 10, 64)
 	if err2 != nil {
@@ -151,21 +151,27 @@ func (h *homework) GetHomework(c *web.Context) {
 	if err2 != nil {
 		SendResponse(c, nil, pkg.ParamError)
 	}
-	homework, err := service.HomeworkService.GetHomework(query)
-	var list *model.HomeworkResponse
+	homework, err := service.HomeworkService.GetHomeworkId(uint(parseUint))
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
-	sub, err2 := service.HomeworkService.DetectSub(homework, uint(parseUint))
-	if err2 != nil {
-		SendResponse(c, nil, pkg.ErrorPkg.WithCause(err2))
+	resp := homework.ToResponse()
+	id, b := c.Get("userID")
+	if !b {
+		SendResponse(c, nil, pkg.ServerError)
 	}
-	list = homework.ToResponse()
-	SendResponse(c, map[string]interface{}{
-		"homework":      &list,
-		"my_submission": sub,
-	}, nil)
+	sub, err := service.HomeworkService.DetectSub(homework, id.(uint))
+	if err == nil && sub.ID != 0 {
+		resp.MySubmission = &model.SubmissionInfo{
+			ID:          sub.ID,
+			Score:       *sub.Score,
+			IsExcellent: sub.IsExcellent,
+		}
+	} else {
+		resp.MySubmission = nil
+	}
+	SendResponse(c, resp, nil)
 }
 func (h *homework) GetHomeworkList(c *web.Context) {
 	pageStr := c.Query("page")

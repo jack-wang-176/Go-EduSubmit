@@ -32,13 +32,11 @@ func SendResponse(c *web.Context, data any, errs error, msgS ...string) {
 		}
 		return
 	}
-
 	var e *pkg.CollectError
 	if errors.As(errs, &e) {
 		if e.Raw != nil {
 			log.Fatal(e.Raw)
 		}
-
 		err := c.Json(e.Status, ResponseData{
 			Code: e.Code,
 			Msg:  e.Msg,

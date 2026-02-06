@@ -132,15 +132,13 @@ func (Sub *submission) GetSubByHomeId(id uint64, page, pageSize int) ([]model.Su
 	}
 	return subs, total, nil
 }
-func (Sub *submission) DetectSub(homework *model.Homework, user uint) (bool, error) {
+func (Sub *submission) DetectSub(homework *model.Homework, user uint) (*model.Submission, error) {
 
 	var sub model.Submission
-	tx := DB.Model(&model.Submission{}).Where("homework_id = ? AND user_id = ?", homework.ID, user).Find(&sub)
+	tx := DB.Model(&model.Submission{}).Where("homework_id = ? AND student_id = ?", homework.ID, user).Find(&sub)
 	if tx.Error != nil {
-		return false, tx.Error
+		return nil, tx.Error
 	}
-	if tx.RowsAffected != 0 {
-		return true, nil
-	}
-	return false, nil
+
+	return &sub, nil
 }

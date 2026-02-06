@@ -45,7 +45,7 @@ func (d *homeworkDao) GetHomeworkByTitle(title string) (model.Homework, error) {
 }
 func (d *homeworkDao) GetHomeworkByID(id uint) (*model.Homework, error) {
 	var h model.Homework
-	tx := DB.First(&h, id)
+	tx := DB.Preload("Creator").First(&h, id)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

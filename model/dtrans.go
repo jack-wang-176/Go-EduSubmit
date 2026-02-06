@@ -55,19 +55,30 @@ func (u *User) ToResponse() *UserResponse {
 	}
 }
 
+type SubmissionInfo struct {
+	ID          uint `json:"id"`
+	Score       int  `json:"score"`
+	IsExcellent bool `json:"is_excellent"`
+}
+type CreatorInfo struct {
+	ID       uint   `json:"id"`
+	Nickname string `json:"nickname"`
+}
 type HomeworkResponse struct {
-	ID              uint         `json:"id"`
-	Title           string       `json:"title"`
-	Description     string       `json:"description"`
-	Department      string       `json:"department"`
-	DepartmentLabel string       `json:"department_label"`
-	CreatorID       uint         `json:"creator_id,omitempty"`
-	Creator         User         `gorm:"foreignKey:CreatorID" json:"creator"`
-	Submissions     []Submission `gorm:"foreignKey:HomeworkID" json:"-"`
-	CreatorName     string       `json:"creator_name,omitempty"`
-	Deadline        string       `json:"deadline"`
-	AllowLate       bool         `json:"allow_late"`
-	SubmissionCount int64        `json:"submission_count"`
+	ID              uint            `json:"id"`
+	Title           string          `json:"title"`
+	Description     string          `json:"description"`
+	Department      string          `json:"department"`
+	DepartmentLabel string          `json:"department_label"`
+	CreatorID       uint            `json:"creator_id,omitempty"`
+	CreatorAdmin    User            `gorm:"foreignKey:CreatorID" json:"-"`
+	Submissions     []Submission    `gorm:"foreignKey:HomeworkID" json:"-"`
+	CreatorName     string          `json:"creator_name,omitempty"`
+	Deadline        string          `json:"deadline"`
+	AllowLate       bool            `json:"allow_late"`
+	SubmissionCount int64           `json:"submission_count"`
+	MySubmission    *SubmissionInfo `json:"my_submission,omitempty"`
+	Creator         CreatorInfo     `json:"creator"`
 }
 
 func (h *Homework) ToResponse() *HomeworkResponse {
@@ -82,6 +93,10 @@ func (h *Homework) ToResponse() *HomeworkResponse {
 		SubmissionCount: int64(len(h.Submissions)),
 		Deadline:        h.Deadline.Format("2006-01-02 15:04:05"),
 		AllowLate:       h.AllowLate,
+		Creator: CreatorInfo{
+			ID:       h.CreatorID,
+			Nickname: h.Creator.Nickname,
+		},
 	}
 }
 
