@@ -37,7 +37,6 @@ func TokenCreate(user *model.User) (accessToken string, refreshToken string, err
 	accessClaim := TokenClaim{
 		UserID:     user.ID,
 		Name:       user.Name,
-		Email:      *user.Email,
 		Role:       user.Role,
 		Department: user.Department,
 		RegisteredClaims: jwt.RegisteredClaims{

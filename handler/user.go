@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"homework_submit/dao"
 	"homework_submit/model"
 	"homework_submit/pkg"
 	"homework_submit/service"
@@ -30,12 +29,17 @@ func (u *user) Login(c *web.Context) {
 		return
 	}
 
-	user, _ := dao.UserDao.GetUserByName(req.Username)
+	user, err := service.UserService.GetAccount(req.Username)
+	if err != nil {
+		SendResponse(c, nil, err)
+		return
+	}
+
 	SendResponse(c, map[string]interface{}{
 		"access_token":  access,
 		"refresh_token": refresh,
 		"user":          user.ToResponse(),
-	}, nil)
+	}, nil, "登录成功")
 }
 func (u *user) Register(c *web.Context) {
 	var req struct {
@@ -59,7 +63,7 @@ func (u *user) Register(c *web.Context) {
 		SendResponse(c, nil, err)
 		return
 	}
-	SendResponse(c, theUser.ToResponse(), nil)
+	SendResponse(c, theUser.ToResponse(), nil, "注册成功")
 }
 func (u *user) RefreshToken(c *web.Context) {
 	var req struct {
@@ -72,25 +76,28 @@ func (u *user) RefreshToken(c *web.Context) {
 }
 func (u *user) GetProfile(c *web.Context) {
 	id, _ := c.Get("userID")
-	resp, err := service.UserService.GetProfile(id.(uint))
+	user, err := service.UserService.GetProfile(id.(uint))
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
-	SendResponse(c, resp, nil)
+	SendResponse(c, user.ToResponse(), nil)
 }
 func (u *user) DeleteUser(c *web.Context) {
 	var req struct {
-		Username string `json:"username"`
 		Password string `json:"password"`
 	}
+	id, _ := c.Get("userID")
 	err := c.BindJson(&req)
 	if err != nil {
 		SendResponse(c, nil, pkg.ParamError)
+		return
 	}
 
-	err = service.UserService.DeleteAccount(req.Username, req.Password)
+	err = service.UserService.DeleteAccount(id.(uint), req.Password)
 	if err != nil {
 		SendResponse(c, nil, pkg.ErrDeleteUserFailed)
+		return
 	}
+	SendResponse(c, nil, nil, "账号已注销")
 }

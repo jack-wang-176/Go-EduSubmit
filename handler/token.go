@@ -23,12 +23,12 @@ func (t *token) RefreshToken(c *web.Context) {
 
 	newAccess, newRefresh, err := service.UserService.RefreshToken(req.RefreshToken)
 	if err != nil {
-		SendResponse(c, nil, pkg.FailedRefresh)
+		SendResponse(c, nil, err)
 		return
 	}
 
 	SendResponse(c, map[string]string{
 		"access_token":  newAccess,
 		"refresh_token": newRefresh,
-	}, nil)
+	}, nil, "刷新成功")
 }

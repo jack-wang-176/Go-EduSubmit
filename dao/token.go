@@ -22,6 +22,7 @@ func (d *tokens) Create(userID uint, user, token string, expiresAt time.Time) er
 	}
 	return DB.Create(&rt).Error
 }
+
 func (d *tokens) GetValidToken(tokenStr string) (*model.RefreshToken, error) {
 	var rt model.RefreshToken
 
@@ -47,4 +48,8 @@ func (d *tokens) Revoke(tokenStr string) error {
 	return DB.Model(&model.RefreshToken{}).
 		Where("token = ?", tokenStr).
 		Update("revoked", true).Error
+}
+
+func (d *tokens) DeleteByUserID(userID uint) error {
+	return DB.Where("user_id = ?", userID).Delete(&model.RefreshToken{}).Error
 }

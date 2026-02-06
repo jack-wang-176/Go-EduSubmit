@@ -12,14 +12,19 @@ import (
 type ResponseData struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg"`
-	Data any    `json:"data,omitempty"`
+	Data any    `json:"data"`
 }
 
-func SendResponse(c *web.Context, data any, errs error) {
+func SendResponse(c *web.Context, data any, errs error, msgS ...string) {
 	if errs == nil {
+		message := "success"
+		if len(msgS) > 0 {
+			message = msgS[0]
+		}
+
 		err := c.Json(http.StatusOK, ResponseData{
 			Code: 0,
-			Msg:  "success",
+			Msg:  message,
 			Data: data,
 		})
 		if err != nil {
@@ -27,6 +32,7 @@ func SendResponse(c *web.Context, data any, errs error) {
 		}
 		return
 	}
+
 	var e *pkg.CollectError
 	if errors.As(errs, &e) {
 		if e.Raw != nil {

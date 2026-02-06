@@ -62,7 +62,20 @@ func (u *userService) Login(username, password string) (string, string, error) {
 	if !matched {
 		return "", "", pkg.ErrPasswordIncorrect
 	}
-	return pkg.TokenCreate(user)
+	token, refreshToken, err := pkg.TokenCreate(user)
+	if err != nil {
+		return "", "", pkg.ErrorPkg.WithCause(err)
+	}
+	err = dao.Refresh.DeleteByUserID(user.ID)
+	if err != nil {
+		return "", "", pkg.ErrorPkg.WithCause(err)
+	}
+	expiresAt := time.Now().Add(7 * 24 * time.Hour)
+	err = dao.Refresh.Create(user.ID, user.Name, refreshToken, expiresAt)
+	if err != nil {
+		return "", "", pkg.ErrorPkg.WithCause(err)
+	}
+	return token, refreshToken, nil
 }
 func (u *userService) DetectUser(username string) (bool, error) {
 	role, err := dao.UserDao.DetectRole(username)
@@ -78,16 +91,16 @@ func (u *userService) CreateRefresh(id uint, name, refreshToken string, expiresA
 	}
 	return nil
 }
-func (u *userService) GetProfile(id uint) (*model.UserResponse, error) {
+func (u *userService) GetProfile(id uint) (*model.User, error) {
 	user, err := dao.UserDao.GetUserById(id)
 	if err != nil {
 		return nil, pkg.ErrUserNotFound
 	}
-	return user.ToResponse(), nil
+	return user, nil
 }
 
-func (u *userService) DeleteAccount(name string, password string) error {
-	user, err := dao.UserDao.GetUserByName(name)
+func (u *userService) DeleteAccount(id uint, password string) error {
+	user, err := dao.UserDao.GetUserById(id)
 	if err != nil {
 		return pkg.ErrUserNotFound
 	}
@@ -96,4 +109,11 @@ func (u *userService) DeleteAccount(name string, password string) error {
 		return pkg.ErrPasswordIncorrect
 	}
 	return dao.UserDao.DeleteUser(user)
+}
+func (u *userService) GetAccount(name string) (*model.User, error) {
+	user, err := dao.UserDao.GetUserByName(name)
+	if err != nil {
+		return nil, pkg.ErrUserNotFound
+	}
+	return user, nil
 }
