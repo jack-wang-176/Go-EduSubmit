@@ -12,7 +12,7 @@ type homeworkDao struct{}
 var HomeworkDao = new(homeworkDao)
 
 func (d *homeworkDao) LaunchHomework(h *model.Homework) error {
-	return DB.Create(h).Error
+	return DB.Model(model.Homework{}).Create(h).Error
 }
 
 func (d *homeworkDao) UpdateHomework(h *model.Homework, updates map[string]interface{}) error {
@@ -63,7 +63,7 @@ func (d *homeworkDao) GetHomeworkByDepartment(department model.Department, page,
 		return nil, 0, tx.Error
 	}
 	offset := (page - 1) * pageSize
-	err := query.Preload("Homework").Preload("Student").Offset(offset).Limit(pageSize).Find(&homeworks).Error
+	err := query.Preload("Creator").Preload("Submissions").Offset(offset).Limit(pageSize).Find(&homeworks).Error
 	if err != nil {
 		return nil, 0, err
 	}

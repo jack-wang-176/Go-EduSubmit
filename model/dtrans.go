@@ -56,21 +56,22 @@ func (u *User) ToResponse() *UserResponse {
 }
 
 type HomeworkResponse struct {
-	ID              uint   `json:"id"`
-	Title           string `json:"title"`
-	Description     string `json:"description"`
-	Department      string `json:"department"`
-	DepartmentLabel string `json:"department_label"`
-	CreatorID       uint   `json:"creator_id,omitempty"`
-	CreatorName     string `json:"creator_name,omitempty"`
-	Deadline        string `json:"deadline"`
-	AllowLate       bool   `json:"allow_late"`
-	SubmissionCount int64  `json:"submission_count,omitempty"`
-	CreatedAt       string `json:"created_at"`
-	UpdatedAt       string `json:"updated_at"`
+	ID              uint         `json:"id"`
+	Title           string       `json:"title"`
+	Description     string       `json:"description"`
+	Department      string       `json:"department"`
+	DepartmentLabel string       `json:"department_label"`
+	CreatorID       uint         `json:"creator_id,omitempty"`
+	Creator         User         `gorm:"foreignKey:CreatorID" json:"creator"`
+	Submissions     []Submission `gorm:"foreignKey:HomeworkID" json:"-"`
+	CreatorName     string       `json:"creator_name,omitempty"`
+	Deadline        string       `json:"deadline"`
+	AllowLate       bool         `json:"allow_late"`
+	SubmissionCount int64        `json:"submission_count"`
 }
 
 func (h *Homework) ToResponse() *HomeworkResponse {
+
 	return &HomeworkResponse{
 		ID:              h.ID,
 		Title:           h.Title,
@@ -78,6 +79,7 @@ func (h *Homework) ToResponse() *HomeworkResponse {
 		Department:      DeptNameMap[h.Department],
 		DepartmentLabel: DeptLabelMap[h.Department],
 		CreatorID:       h.CreatorID,
+		SubmissionCount: int64(len(h.Submissions)),
 		Deadline:        h.Deadline.Format("2006-01-02 15:04:05"),
 		AllowLate:       h.AllowLate,
 	}

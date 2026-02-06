@@ -19,7 +19,7 @@ func (h *homework) LaunchHomework(c *web.Context) {
 		Title       string `json:"title"`
 		Description string `json:"description"`
 		Deadline    string `json:"deadline"`
-		AllowLate   bool   `json:"allowLate"`
+		AllowLate   bool   `json:"allow_late"`
 	}
 	var err error
 	err = c.BindJson(&req)
@@ -32,9 +32,9 @@ func (h *homework) LaunchHomework(c *web.Context) {
 		SendResponse(c, nil, pkg.ParamError)
 		return
 	}
-	name, b := c.Get("Username")
+	name, b := c.Get("user")
 	if !b {
-		SendResponse(c, nil, err)
+		SendResponse(c, nil, pkg.TokenErr)
 		return
 	}
 	err = service.HomeworkService.LaunchHomework(req.Title, req.Description, name.(string), req.AllowLate, deadline)
@@ -42,7 +42,19 @@ func (h *homework) LaunchHomework(c *web.Context) {
 		SendResponse(c, nil, err)
 		return
 	}
-	SendResponse(c, nil, nil)
+	homework, err := service.HomeworkService.GetHomework(req.Title)
+	if err != nil {
+		SendResponse(c, nil, err)
+		return
+	}
+	SendResponse(c, map[string]interface{}{
+		"id":               homework.ID,
+		"title":            homework.Title,
+		"department":       model.DeptNameMap[homework.Department],
+		"department_label": model.DeptLabelMap[homework.Department],
+		"deadline":         deadline.Format("2006-01-02 15:04:05"),
+		"allowLate":        req.AllowLate,
+	}, nil, "发布成功")
 }
 func (h *homework) DeleteHomework(c *web.Context) {
 	var err error
@@ -159,12 +171,15 @@ func (h *homework) GetHomeworkList(c *web.Context) {
 	pageStr := c.Query("page")
 	pageSizeStr := c.Query("page_size")
 	depStr := c.Query("department")
+	val, ok := model.Depart[depStr]
+	if !ok {
+		SendResponse(c, nil, pkg.ErrDepartmentWorkNotFound)
+		return
+	}
 
 	page, _ := strconv.Atoi(pageStr)
 	pageSize, _ := strconv.Atoi(pageSizeStr)
-	department, _ := strconv.Atoi(depStr)
-	depart := model.Department(department)
-	resp, err := service.HomeworkService.GetDepartmentWork(depart, page, pageSize)
+	resp, err := service.HomeworkService.GetDepartmentWork(val, page, pageSize)
 	if err != nil || resp == nil {
 		SendResponse(c, nil, err)
 		return
@@ -176,7 +191,8 @@ func (h *homework) GetHomeworkList(c *web.Context) {
 		}
 	}
 	SendResponse(c, map[string]interface{}{
-		"list":      list,
+		"list": list,
+
 		"total":     resp.Total,
 		"page":      page,
 		"page_size": pageSize,

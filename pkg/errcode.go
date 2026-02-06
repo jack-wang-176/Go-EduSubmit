@@ -3,11 +3,10 @@ package pkg
 import "net/http"
 
 var (
-	ServerError   = New(10000, "服务器内部错误", http.StatusInternalServerError)
-	ParamError    = New(10001, "参数错误", http.StatusBadRequest)
-	TokenErr      = New(10002, "token验证失败", http.StatusBadRequest)
-	TokenFailed   = New(10003, "token失效或过期", http.StatusBadRequest)
-	FailedRefresh = New(10004, "刷新token失败", http.StatusBadRequest)
+	ServerError = New(10000, "服务器内部错误", http.StatusInternalServerError)
+	ParamError  = New(10001, "参数错误", http.StatusBadRequest)
+	TokenErr    = New(10002, "token验证失败", http.StatusBadRequest)
+	TokenFailed = New(10003, "token失效或过期", http.StatusBadRequest)
 )
 
 var (
