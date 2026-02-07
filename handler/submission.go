@@ -15,6 +15,7 @@ var Sub submission
 
 func (s *submission) CreateSub(c *web.Context) {
 	var req struct {
+		ID      int    `json:"homework_id"`
 		Content string `json:"content"`
 	}
 	if err := c.BindJson(&req); err != nil {
@@ -24,12 +25,17 @@ func (s *submission) CreateSub(c *web.Context) {
 
 	user, flag := c.Get("user")
 	if flag {
-		err := service.SubService.CreateSub(user.(string), req.Content)
+		sub, err := service.SubService.CreateSub(user.(string), req.Content, uint(req.ID))
 		if err != nil {
 			SendResponse(c, nil, err)
 			return
 		}
-		SendResponse(c, nil, nil)
+		SendResponse(c, map[string]interface{}{
+			"id":           sub.ID,
+			"homework_id":  sub.HomeworkID,
+			"is_late":      sub.IsLate,
+			"submitted_at": sub.SubmittedAt,
+		}, nil, "提交成功")
 	}
 }
 

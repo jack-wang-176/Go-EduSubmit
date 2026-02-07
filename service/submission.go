@@ -11,20 +11,20 @@ type submission struct{}
 
 var SubService submission
 
-func (Sub *submission) CreateSub(creator, title string) error {
+func (Sub *submission) CreateSub(creator, content string, id uint) (*model.Submission, error) {
 	student, err := dao.UserDao.GetUserByName(creator)
 	if err != nil {
-		return pkg.ErrUserNotFound
+		return nil, pkg.ErrUserNotFound
 	}
-	homework, err := dao.HomeworkDao.GetHomeworkByTitle(title)
+	homework, err := dao.HomeworkDao.GetHomeworkByID(id)
 	if err != nil {
-		return pkg.ErrHomeworkNotFound
+		return nil, pkg.ErrHomeworkNotFound
 	}
 	if !homework.AllowLate && homework.Deadline.Before(time.Now()) {
-		return pkg.ErrAlreadyLate
+		return nil, pkg.ErrAlreadyLate
 	}
-	if student.ID != homework.ID {
-		return pkg.ErrWrongDepartment
+	if student.Department != homework.Department {
+		return nil, pkg.ErrWrongDepartment
 	}
 	sub := model.Submission{
 		HomeworkID:  homework.ID,
@@ -32,12 +32,13 @@ func (Sub *submission) CreateSub(creator, title string) error {
 		SubmittedAt: time.Now(),
 		IsLate:      homework.Deadline.Before(time.Now()),
 		Department:  student.Department,
+		Content:     content,
 	}
 	err = dao.SubDao.CreateSub(&sub)
 	if err != nil {
-		return pkg.ErrorPkg.WithCause(err)
+		return nil, pkg.ErrorPkg.WithCause(err)
 	}
-	return nil
+	return &sub, nil
 }
 func (Sub *submission) MySub(name string, page, pageSize int) (*model.PageResponse, error) {
 	subs, total, err := dao.SubDao.MySubs(name, page, pageSize)

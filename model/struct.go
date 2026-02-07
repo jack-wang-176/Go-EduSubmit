@@ -71,6 +71,7 @@ type Submission struct {
 	ReviewerID  *uint      `gorm:"default:null" json:"reviewer_id"`
 	Score       *int       `gorm:"default:null" json:"score"`
 	Comment     string     `gorm:"type:text" json:"comment"`
+	Content     string     `gorm:"type:text" json:"content"`
 	FileUrl     string     `gorm:"type:varchar(500)" json:"file_url"`
 	IsExcellent bool       `gorm:"not null;default:false" json:"is_excellent"`
 	Version     *int       `gorm:"default:1" json:"version"`
