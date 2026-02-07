@@ -1,0 +1,1251 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "默认模块",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/user/register": {
+      "post": {
+        "summary": "register",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "username": "xiaodeng001",
+                "password": "123456",
+                "nickname": "小登一号",
+                "department": "backend"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 10001,
+                  "msg": "参数错误"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/user/login": {
+      "post": {
+        "summary": "login",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "username": "xiaodeng001",
+                "password": "123456"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "登录成功",
+                  "data": {
+                    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJuYW1lIjoieGlhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjEsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDM1NzcwNCwiaWF0IjoxNzcwMzUwNTA0fQ.auWnSo52xXzGgSmWKynmKbT_aXL9zBHce7REt2mnHf8",
+                    "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJuYW1lIjoiIiwiZW1haWwiOiIiLCJyb2xlIjowLCJkZXBhcnRtZW50IjowLCJleHAiOjE3NzA5NTUzMDQsImlhdCI6MTc3MDM1MDUwNH0.RhIfNF8P8m8_tebKjj5bfq6v9fVBqa-Us6z30La_xVU",
+                    "user": {
+                      "id": 5,
+                      "username": "xiaodeng001",
+                      "nickname": "小登一号",
+                      "role": "student",
+                      "department": "backend",
+                      "department_label": "后端"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/user/profile": {
+      "get": {
+        "summary": "profile",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJuYW1lIjoieGlhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjEsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDM1Nzk1NSwiaWF0IjoxNzcwMzUwNzU1fQ.f_ALDERNMciFo1Jf7qOFZCbjuIn7gzB0W1WDTV25vOM",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "success",
+                  "data": {
+                    "id": 5,
+                    "username": "xiaodeng001",
+                    "nickname": "小登一号",
+                    "role": "student",
+                    "department": "backend",
+                    "department_label": "后端"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/user/account": {
+      "delete": {
+        "summary": "Delete",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo1LCJuYW1lIjoieGlhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjEsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDM1Nzk1NSwiaWF0IjoxNzcwMzUwNzU1fQ.f_ALDERNMciFo1Jf7qOFZCbjuIn7gzB0W1WDTV25vOM",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "password": "123456"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "账号已注销"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/user/refresh": {
+      "post": {
+        "summary": "refresh_token",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3LCJuYW1lIjoiIiwiZW1haWwiOiIiLCJyb2xlIjowLCJkZXBhcnRtZW50IjowLCJleHAiOjE3NzA5NzU4MDUsImlhdCI6MTc3MDM3MTAwNX0.YIdjhpszpS1HHuFnTu4YphfDVmZgPDVtrIs_bAsHYT0"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 10003,
+                  "msg": "token失效或过期",
+                  "data": null
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/homework": {
+      "post": {
+        "summary": "homework_launch",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywibmFtZSI6Imxhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjIsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDM3ODY1MSwiaWF0IjoxNzcwMzcxNDUxfQ.cvucjoR9-Czh5dc8VnvzNaXts6WxfDSrhwHA70tVzCo",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "title": "1",
+                "description": "使用 Gin 框架实SADF现一个简单的 RESTful API. ",
+                "department": "backend",
+                "deadline": "2024-01-20 23:59:59",
+                "allow_late": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "发布成功",
+                  "data": {
+                    "allowLate": true,
+                    "deadline": "2024-01-20 23:59:59",
+                    "department": "backend",
+                    "department_label": "后端",
+                    "id": 5,
+                    "title": "1"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "get": {
+        "summary": "department_homework",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "department",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "Backend",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 3,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywibmFtZSI6Imxhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjIsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDM4NDY4NiwiaWF0IjoxNzcwMzc3NDg2fQ.irrglaIbtcJJ679PPy3ZUkjF0mNoCypsfb6udVCs4Fc",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "success",
+                  "data": {
+                    "list": [
+                      {
+                        "id": 1,
+                        "title": "第是N·周作业：实现简单的 HTTP 服务器",
+                        "description": "使用 Gin 框架实SADF现一个简单的 RESTful API. ",
+                        "department": "backend",
+                        "department_label": "后端",
+                        "creator_id": 13,
+                        "creator": {
+                          "ID": 0,
+                          "CreatedAt": "0001-01-01T00:00:00Z",
+                          "UpdatedAt": "0001-01-01T00:00:00Z",
+                          "DeletedAt": null,
+                          "name": "",
+                          "email": null,
+                          "nickname": "",
+                          "role": 0,
+                          "department": 0
+                        },
+                        "deadline": "2024-01-20 23:59:59",
+                        "allow_late": false,
+                        "submission_count": 0
+                      },
+                      {
+                        "id": 3,
+                        "title": "第是N·使人反感和当时法国周作业：实现简单的 HTTP 服务器",
+                        "description": "使用 Gin 框架实SADF现一个简单的 RESTful API. ",
+                        "department": "backend",
+                        "department_label": "后端",
+                        "creator_id": 13,
+                        "creator": {
+                          "ID": 0,
+                          "CreatedAt": "0001-01-01T00:00:00Z",
+                          "UpdatedAt": "0001-01-01T00:00:00Z",
+                          "DeletedAt": null,
+                          "name": "",
+                          "email": null,
+                          "nickname": "",
+                          "role": 0,
+                          "department": 0
+                        },
+                        "deadline": "2024-01-20 23:59:59",
+                        "allow_late": false,
+                        "submission_count": 0
+                      },
+                      {
+                        "id": 5,
+                        "title": "1",
+                        "description": "使用 Gin 框架实SADF现一个简单的 RESTful API. ",
+                        "department": "backend",
+                        "department_label": "后端",
+                        "creator_id": 13,
+                        "creator": {
+                          "ID": 0,
+                          "CreatedAt": "0001-01-01T00:00:00Z",
+                          "UpdatedAt": "0001-01-01T00:00:00Z",
+                          "DeletedAt": null,
+                          "name": "",
+                          "email": null,
+                          "nickname": "",
+                          "role": 0,
+                          "department": 0
+                        },
+                        "deadline": "2024-01-20 23:59:59",
+                        "allow_late": true,
+                        "submission_count": 0
+                      }
+                    ],
+                    "page": 1,
+                    "page_size": 3,
+                    "total": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/homework/1": {
+      "put": {
+        "summary": "update",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywibmFtZSI6Imxhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjIsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDQ0MjYzNiwiaWF0IjoxNzcwNDM1NDM2fQ.t-ZWeKflc1y38Opnp2A85lDibRKpabZAzMeP3lWR23M",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "title": "sdfasdfsaDv",
+                "description": "123123123",
+                "deadline": "2024-01-22 23:59:59",
+                "allow_late": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "examples": {
+                  "1": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  },
+                  "2": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  },
+                  "3": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  },
+                  "4": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  },
+                  "5": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  },
+                  "6": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  },
+                  "7": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  },
+                  "8": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  },
+                  "9": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  },
+                  "10": {
+                    "summary": "成功",
+                    "value": {
+                      "code": 0,
+                      "msg": "修改成功",
+                      "data": {
+                        "description": "123123123",
+                        "id": 1,
+                        "title": "sdfasdfsaDv"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      },
+      "delete": {
+        "summary": "delete",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywibmFtZSI6Imxhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjIsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDQ0MjYzNiwiaWF0IjoxNzcwNDM1NDM2fQ.t-ZWeKflc1y38Opnp2A85lDibRKpabZAzMeP3lWR23M",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "删除成功",
+                  "data": null
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/submission": {
+      "post": {
+        "summary": "createsub",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3LCJuYW1lIjoieGlhb2RlbmcwMDIiLCJlbWFpbCI6IiIsInJvbGUiOjEsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDQ0NTk2NCwiaWF0IjoxNzcwNDM4NzY0fQ.8drY6y6WriLeeDBvZDx8t6JFmG7FTz9vAmkLDM3FcNQ",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "homework_id": 3,
+                "content": "sihdjSADFAASDFijhfas"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "提交成功",
+                  "data": {
+                    "homework_id": 3,
+                    "id": 2,
+                    "is_late": false,
+                    "submitted_at": "2026-02-07T12:53:11.6194544+08:00"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/submission/my": {
+      "get": {
+        "summary": "mysub",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo3LCJuYW1lIjoieGlhb2RlbmcwMDIiLCJlbWFpbCI6IiIsInJvbGUiOjEsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDQ1ODkzMSwiaWF0IjoxNzcwNDUxNzMxfQ.BtQRUnUp1EKeg8iNqg-WiqNUnWQtDtZNhumDFSlbyBw",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "success",
+                  "data": {
+                    "list": [
+                      {
+                        "id": 1,
+                        "homework": {
+                          "id": 3,
+                          "title": "sdfasdfsaDvasdfasdf",
+                          "department": "backend",
+                          "department_label": "后端"
+                        },
+                        "score": null,
+                        "comment": "",
+                        "is_excellent": false,
+                        "submitted_at": "2026-02-07 12:52:49"
+                      },
+                      {
+                        "id": 2,
+                        "homework": {
+                          "id": 3,
+                          "title": "sdfasdfsaDvasdfasdf",
+                          "department": "backend",
+                          "department_label": "后端"
+                        },
+                        "score": null,
+                        "comment": "",
+                        "is_excellent": false,
+                        "submitted_at": "2026-02-07 12:53:11"
+                      },
+                      {
+                        "id": 3,
+                        "homework": {
+                          "id": 3,
+                          "title": "sdfasdfsaDvasdfasdf",
+                          "department": "backend",
+                          "department_label": "后端"
+                        },
+                        "score": null,
+                        "comment": "",
+                        "is_excellent": false,
+                        "submitted_at": "2026-02-07 16:31:49"
+                      }
+                    ],
+                    "page": 1,
+                    "page_size": 0,
+                    "total": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/submission/homework/3": {
+      "get": {
+        "summary": "allsub",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywibmFtZSI6Imxhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjIsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDQ2MTg5NSwiaWF0IjoxNzcwNDU0Njk1fQ.jo62InwMNYGnMoFdyHvDseCmW9gD3IU4Y8fftfoSiTY",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "success",
+                  "data": {
+                    "list": [
+                      {
+                        "id": 1,
+                        "student": {
+                          "id": 7,
+                          "nickname": "小登二号",
+                          "department": "backend",
+                          "department_label": "后端"
+                        },
+                        "content": "sihdjfaoaijhfas",
+                        "score": null,
+                        "comment": "",
+                        "is_excellent": false,
+                        "is_late": false,
+                        "submitted_at": "2026-02-07 12:52:49"
+                      },
+                      {
+                        "id": 2,
+                        "student": {
+                          "id": 7,
+                          "nickname": "小登二号",
+                          "department": "backend",
+                          "department_label": "后端"
+                        },
+                        "content": "sihdjSADFAASDFijhfas",
+                        "score": null,
+                        "comment": "",
+                        "is_excellent": false,
+                        "is_late": false,
+                        "submitted_at": "2026-02-07 12:53:11"
+                      },
+                      {
+                        "id": 3,
+                        "student": {
+                          "id": 7,
+                          "nickname": "小登二号",
+                          "department": "backend",
+                          "department_label": "后端"
+                        },
+                        "content": "sihdjSADFAASDFijhfas",
+                        "score": null,
+                        "comment": "",
+                        "is_excellent": false,
+                        "is_late": false,
+                        "submitted_at": "2026-02-07 16:31:49"
+                      }
+                    ],
+                    "page": 1,
+                    "page_size": 10,
+                    "total": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/submission/1/review": {
+      "put": {
+        "summary": "review",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywibmFtZSI6Imxhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjIsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDQ2MTg5NSwiaWF0IjoxNzcwNDU0Njk1fQ.jo62InwMNYGnMoFdyHvDseCmW9gD3IU4Y8fftfoSiTY",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "score": 90,
+                "comment": "代码结构清晰，但缺少错误处理。",
+                "is_excellent": false
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "批改成功",
+                  "data": {
+                    "comment": "代码结构清晰，但缺少错误处理。",
+                    "id": 1,
+                    "is_excellent": false,
+                    "reviewed_at": "2026-02-07 17:34:58",
+                    "score": 90
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/submission/1/excellent": {
+      "put": {
+        "summary": "mark_excellent",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywibmFtZSI6Imxhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjIsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDQ2MTg5NSwiaWF0IjoxNzcwNDU0Njk1fQ.jo62InwMNYGnMoFdyHvDseCmW9gD3IU4Y8fftfoSiTY",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {}
+              },
+              "example": {
+                "is_excellent": true
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "标记成功",
+                  "data": {
+                    "id": 1,
+                    "is_excellent": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/submission/excellent": {
+      "get": {
+        "summary": "get_excellent",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Content-Type",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "application/json",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "description": "",
+            "required": false,
+            "example": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxMywibmFtZSI6Imxhb2RlbmcwMDEiLCJlbWFpbCI6IiIsInJvbGUiOjIsImRlcGFydG1lbnQiOjEsImV4cCI6MTc3MDQ2MTg5NSwiaWF0IjoxNzcwNDU0Njk1fQ.jo62InwMNYGnMoFdyHvDseCmW9gD3IU4Y8fftfoSiTY",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {
+                  "code": 0,
+                  "msg": "success",
+                  "data": {
+                    "list": [
+                      {
+                        "id": 1,
+                        "homework": {
+                          "id": 3,
+                          "title": "sdfasdfsaDvasdfasdf",
+                          "department": "backend",
+                          "department_label": "后端"
+                        },
+                        "student": {
+                          "id": 7,
+                          "nickname": "小登二号"
+                        },
+                        "score": 90,
+                        "comment": "代码结构清晰，但缺少错误处理。"
+                      }
+                    ],
+                    "page": 1,
+                    "page_size": 10,
+                    "total": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}
