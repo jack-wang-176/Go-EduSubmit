@@ -48,7 +48,7 @@
 ## 🛠 技术栈 (Tech Stack)
 
 * **语言**: Go (Golang) 1.25
-* **Web 框架**: Gin
+* **Web 框架**: Maple
 * **ORM**: GORM v2
 * **数据库**: MySQL 8.0
 * **配置**: Viper (可选)
