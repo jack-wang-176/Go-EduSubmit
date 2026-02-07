@@ -41,6 +41,9 @@ func (s *homeworkService) DeleteHomework(id uint, dept model.Department) error {
 	if err != nil {
 		return pkg.ErrHomeworkNotFound
 	}
+	if homework.Department != dept {
+		return pkg.ErrWrongDepartment
+	}
 	err = dao.HomeworkDao.DeleteHomework(homework)
 	if err != nil {
 		return pkg.ErrorPkg.WithCause(err)
