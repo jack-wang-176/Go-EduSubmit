@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"fmt"
 	"homework_submit/model"
 
 	"gorm.io/gorm"
@@ -15,21 +14,13 @@ func (d *homeworkDao) LaunchHomework(h *model.Homework) error {
 	return DB.Model(model.Homework{}).Create(h).Error
 }
 
-func (d *homeworkDao) UpdateHomework(h *model.Homework, updates map[string]interface{}) error {
+func (d *homeworkDao) UpdateHomework(id uint, updates map[string]interface{}) error {
 
-	updates["version"] = gorm.Expr("version + 1")
+	updates["version"] = gorm.Expr("version + ?", 1)
 
-	tx := DB.Model(h).
-		Where("id = ? AND version = ?", h.ID, h.Version).
-		Updates(updates)
-
-	if tx.Error != nil {
-		return tx.Error
-	}
-	if tx.RowsAffected == 0 {
-		return fmt.Errorf("更新失败：作业可能已被其他人修改，请刷新后重试")
-	}
-	return nil
+	return DB.Model(&model.Homework{}).
+		Where("id = ?", id).
+		Updates(updates).Error
 }
 func (d *homeworkDao) DeleteHomework(h *model.Homework) error {
 	return DB.Delete(h).Error

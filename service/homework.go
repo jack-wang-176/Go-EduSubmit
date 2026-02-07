@@ -1,10 +1,13 @@
 package service
 
 import (
+	"errors"
 	"homework_submit/dao"
 	"homework_submit/model"
 	"homework_submit/pkg"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 type homeworkService struct {
@@ -45,20 +48,20 @@ func (s *homeworkService) DeleteHomework(title string) error {
 	return nil
 }
 
-func (s *homeworkService) UpdateHomework(id uint, updates map[string]interface{}, version int) error {
-
-	h, err := dao.HomeworkDao.GetHomeworkByID(id)
+func (s *homeworkService) UpdateHomeworkSecure(hwID uint, userDept model.Department, updates map[string]interface{}) error {
+	homework, err := dao.HomeworkDao.GetHomeworkByID(hwID)
 	if err != nil {
-		return pkg.ErrHomeworkNotFound
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return pkg.ErrHomeworkNotFound
+		}
+		return err
 	}
 
-	h.Version = &version
-
-	err = dao.HomeworkDao.UpdateHomework(h, updates)
-	if err != nil {
-		return pkg.ErrorPkg.WithCause(err)
+	if homework.Department != userDept {
+		return pkg.ErrWrongDepartment
 	}
-	return nil
+
+	return dao.HomeworkDao.UpdateHomework(hwID, updates)
 }
 func (s *homeworkService) GetHomework(title string) (*model.Homework, error) {
 	h, err := dao.HomeworkDao.GetHomeworkByTitle(title)

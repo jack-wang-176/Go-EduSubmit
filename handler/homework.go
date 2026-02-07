@@ -90,12 +90,10 @@ func (h *homework) DeleteHomework(c *web.Context) {
 
 func (h *homework) UpdateHomework(c *web.Context) {
 	var req struct {
-		Title       *string           `json:"title"`
-		Description *string           `json:"description"`
-		Deadline    *string           `json:"deadline"`
-		AllowLate   *bool             `json:"allow_late"`
-		Department  *model.Department `json:"department"`
-		Version     int               `json:"version"`
+		Title       *string `json:"title"`
+		Description *string `json:"description"`
+		Deadline    *string `json:"deadline"`
+		AllowLate   *bool   `json:"allow_late"`
 	}
 	idStr, err := c.Param("id")
 	if err != nil {
@@ -112,6 +110,10 @@ func (h *homework) UpdateHomework(c *web.Context) {
 	}
 
 	updates := make(map[string]interface{})
+	userDept, flag := c.Get("department")
+	if !flag {
+		SendResponse(c, nil, pkg.ServerError)
+	}
 
 	if req.Title != nil {
 		updates["title"] = *req.Title
@@ -122,9 +124,7 @@ func (h *homework) UpdateHomework(c *web.Context) {
 	if req.AllowLate != nil {
 		updates["allow_late"] = *req.AllowLate
 	}
-	if req.Department != nil {
-		updates["department"] = *req.Department
-	}
+
 	if req.Deadline != nil {
 		t, err := time.ParseInLocation("2006-01-02 15:04:05", *req.Deadline, time.Local)
 		if err != nil {
@@ -133,13 +133,18 @@ func (h *homework) UpdateHomework(c *web.Context) {
 		}
 		updates["deadline"] = t
 	}
-	err = service.HomeworkService.UpdateHomework(uint(id), updates, req.Version)
+
+	err = service.HomeworkService.UpdateHomeworkSecure(uint(id), userDept.(model.Department), updates)
 
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
-	SendResponse(c, nil, nil)
+	SendResponse(c, map[string]interface{}{
+		"id":          id,
+		"title":       *req.Title,
+		"description": *req.Description,
+	}, nil, "修改成功")
 }
 func (h *homework) GetHomework(c *web.Context) {
 
@@ -197,8 +202,7 @@ func (h *homework) GetHomeworkList(c *web.Context) {
 		}
 	}
 	SendResponse(c, map[string]interface{}{
-		"list": list,
-
+		"list":      list,
 		"total":     resp.Total,
 		"page":      page,
 		"page_size": pageSize,
