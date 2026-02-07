@@ -153,7 +153,7 @@ func (s *submission) ChangeSub(c *web.Context) {
 }
 func (s *submission) GetExcellentList(c *web.Context) {
 	page, _ := strconv.Atoi(c.Query("page"))
-	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+	pageSize, _ := strconv.Atoi(c.Query("pageSize"))
 
 	list, err := service.SubService.GetExcellentList(page, pageSize)
 	if err != nil {
