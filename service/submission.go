@@ -120,18 +120,25 @@ func (Sub *submission) GetWorkSubs(id uint64, page, pageSize int, dept model.Dep
 	}
 
 }
-func (Sub *submission) MarkExcellent(subID uint, reviewer string) error {
+
+// SetExcellent 设置或取消优秀作业
+func (Sub *submission) SetExcellent(subID uint, isExcellent bool, reviewerID uint) error {
+
 	sub, err := dao.SubDao.GetSubByID(subID)
 	if err != nil {
-		return pkg.ErrNoSuchSub
+		return pkg.ErrHomeworkNotFound
 	}
-	user, err := dao.UserDao.GetUserByName(reviewer)
+	user, err := dao.UserDao.GetUserById(reviewerID)
 	if err != nil {
 		return pkg.ErrUserNotFound
 	}
 	if user.Department != sub.Department {
 		return pkg.ErrWrongDepartment
 	}
-	err = dao.SubDao.MarkExcellent(sub, reviewer)
-	return err
+
+	updates := map[string]interface{}{
+		"is_excellent": isExcellent,
+	}
+
+	return dao.SubDao.UpdateSubmissionOptimistic(sub, updates)
 }

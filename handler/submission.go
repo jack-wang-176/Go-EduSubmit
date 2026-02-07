@@ -248,26 +248,37 @@ func (s *submission) GetWorkSubs(c *web.Context) {
 	}, nil)
 }
 func (s *submission) MarkExcellent(c *web.Context) {
-
-	subIDStr, err := c.Param("id")
-	if err != nil {
-		SendResponse(c, nil, pkg.ParamError)
-	}
+	subIDStr, _ := c.Param("id")
 	subID, err := strconv.ParseUint(subIDStr, 10, 64)
 	if err != nil {
 		SendResponse(c, nil, pkg.ParamError)
+		return
 	}
-
-	reviewer, b := c.Get("user")
-	if !b {
-		SendResponse(c, nil, pkg.ServerError)
+	var req struct {
+		IsExcellent bool `json:"is_excellent"`
+	}
+	if err := c.BindJson(&req); err != nil {
+		SendResponse(c, nil, pkg.ParamError)
 		return
 	}
 
-	err = service.SubService.MarkExcellent(uint(subID), reviewer.(string))
+	val, exists := c.Get("userID")
+	if !exists {
+		SendResponse(c, nil, pkg.ServerError)
+		return
+	}
+	reviewerID := val.(uint)
+
+	err = service.SubService.SetExcellent(uint(subID), req.IsExcellent, reviewerID)
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
-	SendResponse(c, nil, nil)
+
+	data := map[string]interface{}{
+		"id":           uint(subID),
+		"is_excellent": req.IsExcellent,
+	}
+
+	SendResponse(c, data, nil, "标记成功")
 }
