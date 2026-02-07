@@ -1,10 +1,14 @@
 
+<div align="center">
 
 # 📚 Go-EduSubmit
 
 > **Go-EduSubmit** 是一个基于 Go (Gin + GORM) 构建的高性能作业提交与批改系统后端。它专注于解决复杂的关联数据查询与并发批改冲突问题，提供清晰、规范的 RESTful API。
 
-[English](https://www.google.com/search?q=%23-english-introduction) | [中文介绍](https://www.google.com/search?q=%23-%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D)
+[English Version](./README_EN.md) | **中文版本**
+
+</div>
+<br>
 
 ---
 
@@ -162,7 +166,7 @@
 ### 方式 1：本地导入 (推荐)
 仓库中已包含导出的 API 规范文件，支持直接导入 **Postman**、**Apifox** 或 **Swagger UI**。
 
-* 📄 **接口定义文件**：[docs/openapi.json](docs/openapi.json)
+* 📄 **接口定义文件**：[接口测试.openapi.json](接口测试.openapi.json)
   *(点击链接可直接查看源码，或右键 "另存为" 下载)*
 
 **如何使用：**
@@ -171,8 +175,8 @@
 3.  选择 `Import` (导入) -> 拖入该文件即可生成完整的接口调试环境。
 
 ### 方式 2：在线预览
-*(如果您有 Apifox 的在线分享链接，可以在这里贴上，如果没有可以删除此小节)*
-[![Apifox Docs](https://img.shields.io/badge/Apifox-在线文档-FF4400?style=flat&logo=apifox&logoColor=white)](您的在线文档链接)
+
+[![Apifox Docs](https://img.shields.io/badge/Apifox-在线文档-FF4400?style=flat&logo=apifox&logoColor=white)](https://s.apifox.cn/e4106f50-0404-4c41-81bc-f45308f92ccb)
 
 ---
 
@@ -183,7 +187,6 @@
 1. **克隆仓库**
 ```bash
 git clone https://github.com/your-username/Go-EduSubmit.git
-
 ```
 
 
@@ -193,7 +196,6 @@ git clone https://github.com/your-username/Go-EduSubmit.git
 ```bash
 go mod tidy
 go run cmd/main.go
-
 ```
 
 
@@ -202,7 +204,6 @@ go run cmd/main.go
    如果遇到 `reviewed_at` 字段缺失报错，请执行：
 ```sql
 ALTER TABLE submissions ADD COLUMN reviewed_at DATETIME NULL COMMENT '批改时间';
-
 ```
 
 
@@ -213,4 +214,4 @@ ALTER TABLE submissions ADD COLUMN reviewed_at DATETIME NULL COMMENT '批改时�
 
 ## 📄 许可证 (License)
 
-[MIT License](https://www.google.com/search?q=LICENSE)
+[MIT License](./MIT)
