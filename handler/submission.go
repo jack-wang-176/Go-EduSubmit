@@ -160,11 +160,75 @@ func (s *submission) GetExcellentList(c *web.Context) {
 		SendResponse(c, nil, err)
 		return
 	}
-	var resSubs []model.SubmissionResponse
-	for _, sub := range *list.ListSub {
-		resSubs = append(resSubs, *sub.ToResponse())
+
+	type HomeworkInfo struct {
+		ID              uint   `json:"id"`
+		Title           string `json:"title"`
+		Department      string `json:"department"`
+		DepartmentLabel string `json:"department_label"`
 	}
-	SendResponse(c, resSubs, nil)
+
+	type StudentInfo struct {
+		ID       uint   `json:"id"`
+		Nickname string `json:"nickname"`
+	}
+
+	type ExcellentItem struct {
+		ID       uint         `json:"id"`
+		Homework HomeworkInfo `json:"homework"`
+		Student  StudentInfo  `json:"student"`
+		Score    int          `json:"score"`
+		Comment  string       `json:"comment"`
+	}
+
+	resList := make([]ExcellentItem, 0)
+
+	if list != nil && list.ListSub != nil {
+		for _, item := range *list.ListSub {
+			if &item != nil {
+				elem := ExcellentItem{
+					ID:      item.ID,
+					Comment: item.Comment,
+					Score:   -1,
+				}
+				if item.Score != nil {
+					elem.Score = *item.Score
+				}
+
+				if item.Homework.ID != 0 {
+					elem.Homework.ID = item.Homework.ID
+					elem.Homework.Title = item.Homework.Title
+					elem.Homework.Department = model.DeptNameMap[item.Homework.Department]
+					elem.Homework.DepartmentLabel = model.DeptLabelMap[item.Homework.Department]
+				} else {
+					elem.Homework.Title = "未知作业"
+				}
+
+				if item.Student.ID != 0 {
+					elem.Student.ID = item.Student.ID
+					elem.Student.Nickname = item.Student.Nickname
+				} else {
+					elem.Student.Nickname = "未知用户"
+				}
+
+				resList = append(resList, elem)
+			}
+		}
+	}
+
+	var total int64 = 0
+	if list != nil {
+		total = list.Total
+	}
+
+	data := map[string]interface{}{
+		"list":      resList,
+		"total":     total,
+		"page":      page,
+		"page_size": pageSize,
+	}
+
+	SendResponse(c, data, nil)
 }
 func (s *submission) GetWorkSubs(c *web.Context) {
 	page := 1

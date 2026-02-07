@@ -87,10 +87,12 @@ func (Sub *submission) ChangeSub(subID uint, reviewerID uint, comment string, sc
 	return sub, nil
 }
 func (Sub *submission) GetExcellentList(page, pageSize int) (*model.PageResponse, error) {
+
 	subs, total, err := dao.SubDao.GetExcellentList(page, pageSize)
 	if err != nil {
-		return nil, pkg.ErrorPkg.WithCause(err)
+		return nil, err
 	}
+
 	return &model.PageResponse{
 		ListSub:  &subs,
 		Total:    total,

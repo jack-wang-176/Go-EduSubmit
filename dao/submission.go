@@ -109,6 +109,7 @@ func (Sub *submission) GetSub(title, name string) (*model.Submission, error) {
 func (Sub *submission) GetExcellentList(page, pageSize int) ([]model.Submission, int64, error) {
 	var submissions []model.Submission
 	var total int64
+
 	query := DB.Model(&model.Submission{}).Where("is_excellent = ?", true)
 
 	if err := query.Count(&total).Error; err != nil {
@@ -117,11 +118,19 @@ func (Sub *submission) GetExcellentList(page, pageSize int) ([]model.Submission,
 
 	offset := (page - 1) * pageSize
 
-	err := query.Preload("Homework").Preload("Student").
-		Offset(offset).Limit(pageSize).
+	err := query.
+		Preload("Homework").
+		Preload("Student").
+		Order("score DESC").
+		Offset(offset).
+		Limit(pageSize).
 		Find(&submissions).Error
 
-	return submissions, total, err
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return submissions, total, nil
 }
 func (Sub *submission) GetSubByID(id uint) (*model.Submission, error) {
 	var sub model.Submission
