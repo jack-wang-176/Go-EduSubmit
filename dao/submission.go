@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"errors"
 	"fmt"
 	"homework_submit/model"
 
@@ -10,7 +11,6 @@ import (
 type submission struct{}
 
 var SubDao = new(submission)
-var Excellent = 1
 
 func (Sub *submission) CreateSub(s *model.Submission) error {
 	return DB.Create(&s).Error
@@ -18,21 +18,32 @@ func (Sub *submission) CreateSub(s *model.Submission) error {
 func (Sub *submission) DeleteSub(s *model.Submission) error {
 	return DB.Delete(&s).Error
 }
-func (Sub *submission) MySubs(my string, page, pageSize int) (*[]model.Submission, int64, error) {
+func (Sub *submission) MySubs(id uint, page, pageSize int) (*[]model.Submission, int64, error) {
 	var s []model.Submission
 	var total int64
-	me, err := UserDao.GetUserByName(my)
-	if err != nil {
-		return nil, 0, err
+
+	if page <= 0 {
+		page = 1
 	}
-	query := DB.Model(&model.Submission{}).Where("CreatorID = ?", me.ID)
-	if query.Count(&total).Error != nil {
-		return nil, 0, err
+	if pageSize <= 0 {
+		pageSize = 10
 	}
 	offset := (page - 1) * pageSize
-	query.Preload("Homework").Preload("Student").Offset(offset).Limit(pageSize).Find(&s)
-	if query.Error != nil {
-		return nil, 0, query.Error
+
+	query := DB.Model(&model.Submission{}).Where("student_id = ?", id)
+
+	if err := query.Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	err := query.Preload("Homework").
+		Preload("Student").
+		Offset(offset).
+		Limit(pageSize).
+		Find(&s).Error
+
+	if err != nil {
+		return nil, 0, err
 	}
 	return &s, total, nil
 }
@@ -45,21 +56,22 @@ func (Sub *submission) DepartmentSubs(department model.Department) (*[]model.Sub
 	return &s, nil
 }
 
-func (Sub *submission) ChangeSub(s *model.Submission, reviewer string, score int, comment string, excellent int) error {
-	ex := excellent == Excellent
-	result := DB.Model(s).Where("Version = ?", s.Version).Updates(map[string]interface{}{
-		"Score":     score,
-		"Comment":   comment,
-		"excellent": ex,
-		"version":   gorm.Expr("Version + 1"),
-		"reviewer":  reviewer,
-	})
+func (Sub *submission) UpdateSubmissionOptimistic(sub *model.Submission, updates map[string]interface{}) error {
+
+	updates["version"] = gorm.Expr("version + 1")
+
+	result := DB.Model(&model.Submission{}).
+		Where("id = ? AND version = ?", sub.ID, sub.Version).
+		Updates(updates)
+
 	if result.Error != nil {
 		return result.Error
 	}
+
 	if result.RowsAffected == 0 {
-		return fmt.Errorf("Sub Already be changed ")
+		return errors.New("数据已被修改，请刷新后重试")
 	}
+
 	return nil
 }
 func (Sub *submission) MarkExcellent(s *model.Submission, reviewer string) error {
@@ -113,10 +125,8 @@ func (Sub *submission) GetExcellentList(page, pageSize int) ([]model.Submission,
 }
 func (Sub *submission) GetSubByID(id uint) (*model.Submission, error) {
 	var sub model.Submission
-	if err := DB.First(&sub, id).Error; err != nil {
-		return nil, err
-	}
-	return &sub, nil
+	err := DB.Preload("Student").Preload("Homework").First(&sub, id).Error
+	return &sub, err
 }
 func (Sub *submission) GetSubByHomeId(id uint64, page, pageSize int) ([]model.Submission, int64, error) {
 	var subs []model.Submission

@@ -2,11 +2,16 @@ package main
 
 import (
 	"homework_submit/dao"
+	"homework_submit/model"
 	"homework_submit/router"
 )
 
 func composer() {
 	err := dao.InitDb()
+	if err != nil {
+		panic(err)
+	}
+	err = dao.DB.AutoMigrate(&model.Submission{})
 	if err != nil {
 		panic(err)
 	}

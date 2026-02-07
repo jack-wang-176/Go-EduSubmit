@@ -65,7 +65,8 @@ type CreatorInfo struct {
 	Nickname string `json:"nickname"`
 }
 type HomeworkResponse struct {
-	ID              uint            `json:"id"`
+	ID uint `json:"id"`
+
 	Title           string          `json:"title"`
 	Description     string          `json:"description"`
 	Department      string          `json:"department"`
@@ -135,7 +136,5 @@ func (s *Submission) ToResponse() *SubmissionResponse {
 		Version:         s.Version,
 		Department:      DeptNameMap[s.Department],
 		DepartmentLabel: DeptLabelMap[s.Department],
-		CreatedAt:       s.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:       s.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 }

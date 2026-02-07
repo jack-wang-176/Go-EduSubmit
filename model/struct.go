@@ -76,6 +76,7 @@ type Submission struct {
 	IsExcellent bool       `gorm:"not null;default:false" json:"is_excellent"`
 	Version     *int       `gorm:"default:1" json:"version"`
 	Department  Department `gorm:"type:tinyint;not null;default:0" json:"department"`
+	ReviewedAt  *time.Time `json:"reviewed_at"`
 }
 type PageResponse struct {
 	ListSub      *[]Submission `json:"list"`

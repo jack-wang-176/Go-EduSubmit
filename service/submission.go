@@ -40,8 +40,8 @@ func (Sub *submission) CreateSub(creator, content string, id uint) (*model.Submi
 	}
 	return &sub, nil
 }
-func (Sub *submission) MySub(name string, page, pageSize int) (*model.PageResponse, error) {
-	subs, total, err := dao.SubDao.MySubs(name, page, pageSize)
+func (Sub *submission) MySub(id uint, page, pageSize int) (*model.PageResponse, error) {
+	subs, total, err := dao.SubDao.MySubs(id, page, pageSize)
 	if err != nil {
 		return nil, pkg.ErrorPkg.WithCause(err)
 	}
@@ -60,23 +60,31 @@ func (Sub *submission) DepartmentSub(department model.Department) (*[]model.Subm
 	return subs, nil
 }
 
-func (Sub *submission) ChangeSub(subID uint, reviewer, comment string, score, excellent, version int) error {
+func (Sub *submission) ChangeSub(subID uint, reviewerID uint, comment string, score int, isExcellent bool) (*model.Submission, error) {
 	sub, err := dao.SubDao.GetSubByID(subID)
 	if err != nil {
-		return pkg.ErrNoSuchSub
+		return nil, pkg.ErrHomeworkNotFound
 	}
-	if sub.Version != &version {
-		return pkg.ErrSubBeChanged
+
+	updates := map[string]interface{}{
+		"score":        score,
+		"comment":      comment,
+		"is_excellent": isExcellent,
+		"reviewer_id":  reviewerID,
+		"reviewed_at":  time.Now(),
 	}
-	user, err := dao.UserDao.GetUserByName(reviewer)
+
+	err = dao.SubDao.UpdateSubmissionOptimistic(sub, updates)
 	if err != nil {
-		return pkg.ErrUserNotFound
+		return nil, err
 	}
-	if user.Department != sub.Department {
-		return pkg.ErrWrongDepartment
-	}
-	err = dao.SubDao.ChangeSub(sub, reviewer, score, comment, excellent)
-	return err
+
+	sub.Score = &score
+	sub.Comment = comment
+	sub.IsExcellent = isExcellent
+	sub.ReviewerID = &reviewerID
+
+	return sub, nil
 }
 func (Sub *submission) GetExcellentList(page, pageSize int) (*model.PageResponse, error) {
 	subs, total, err := dao.SubDao.GetExcellentList(page, pageSize)
