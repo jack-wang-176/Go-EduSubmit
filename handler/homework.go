@@ -58,34 +58,22 @@ func (h *homework) LaunchHomework(c *web.Context) {
 }
 func (h *homework) DeleteHomework(c *web.Context) {
 	var err error
-	var req struct {
-		Title string `json:"title"`
-	}
-	err = c.BindJson(&req)
+
+	param, err := c.Param("id")
 	if err != nil {
 		SendResponse(c, nil, pkg.ParamError)
-		return
 	}
-	name, b := c.Get("Username")
+	id, err := strconv.ParseUint(param, 10, 64)
+	dept, b := c.Get("department")
 	if !b {
 		SendResponse(c, nil, pkg.ServerError)
-		return
 	}
-	detectUser, err := service.UserService.DetectUser(name.(string))
+	err = service.HomeworkService.DeleteHomework(uint(id), dept.(model.Department))
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
-	if !detectUser {
-		SendResponse(c, nil, pkg.ErrUserNotAdmin)
-		return
-	}
-	err = service.HomeworkService.DeleteHomework(req.Title)
-	if err != nil {
-		SendResponse(c, nil, err)
-		return
-	}
-	SendResponse(c, nil, nil)
+	SendResponse(c, nil, nil, "删除成功")
 }
 
 func (h *homework) UpdateHomework(c *web.Context) {

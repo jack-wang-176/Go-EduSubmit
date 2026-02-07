@@ -36,12 +36,12 @@ func (s *homeworkService) LaunchHomework(title, des, creator string, late bool, 
 	}
 	return nil
 }
-func (s *homeworkService) DeleteHomework(title string) error {
-	homework, err := dao.HomeworkDao.GetHomeworkByTitle(title)
+func (s *homeworkService) DeleteHomework(id uint, dept model.Department) error {
+	homework, err := dao.HomeworkDao.GetHomeworkByID(id)
 	if err != nil {
 		return pkg.ErrHomeworkNotFound
 	}
-	err = dao.HomeworkDao.DeleteHomework(&homework)
+	err = dao.HomeworkDao.DeleteHomework(homework)
 	if err != nil {
 		return pkg.ErrorPkg.WithCause(err)
 	}
