@@ -155,6 +155,29 @@
 * **Query**: `page=1&page_size=10`
 * **Response**: 同时包含 `homework` (题目) 和 `student` (作者) 的完整嵌套信息。
 
+## 📚 接口文档 (API Documentation)
+
+本项目基于 OpenAPI 3.0 规范设计。为了方便开发者调试，我们提供了完整的接口定义文件。
+
+### 方式 1：本地导入 (推荐)
+仓库中已包含导出的 API 规范文件，支持直接导入 **Postman**、**Apifox** 或 **Swagger UI**。
+
+* 📄 **接口定义文件**：[docs/openapi.json](docs/openapi.json)
+  *(点击链接可直接查看源码，或右键 "另存为" 下载)*
+
+**如何使用：**
+1.  下载 `openapi.json` 文件。
+2.  打开 Postman / Apifox。
+3.  选择 `Import` (导入) -> 拖入该文件即可生成完整的接口调试环境。
+
+### 方式 2：在线预览
+*(如果您有 Apifox 的在线分享链接，可以在这里贴上，如果没有可以删除此小节)*
+[![Apifox Docs](https://img.shields.io/badge/Apifox-在线文档-FF4400?style=flat&logo=apifox&logoColor=white)](您的在线文档链接)
+
+---
+
+
+
 ## 🚀 快速开始 (Getting Started)
 
 1. **克隆仓库**
