@@ -25,3 +25,19 @@ export const getHomeworkDetail = (id: number) => {
         method: 'get'
     })
 }
+interface CreateHomeworkData {
+    title: string
+    description: string
+    department: string // 后端需要枚举值，如 'Backend'
+    deadline: string   // 格式 '2006-01-02 15:04:05'
+    allow_late: boolean
+}
+
+// 新增：发布作业方法
+export const createHomework = (data: CreateHomeworkData) => {
+    return request({
+        url: '/homework', // 对应后端 POST /homework
+        method: 'post',
+        data
+    })
+}

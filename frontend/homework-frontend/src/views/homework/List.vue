@@ -1,36 +1,94 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
-import { getHomeworkList } from '../../api/homework'
-import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
-const router = useRouter()
-// 表格数据
-const tableData = ref([])
-const loading = ref(false)
+// ✅ 引入 createHomework
+import { getHomeworkList, createHomework } from '../../api/homework'
+import { ElMessage } from 'element-plus'
 
-// ✅ 1. 定义当前选中的部门
-// 注意："Golang" 必须是你后端 model.Depart map 里真正存在的 Key！
-// 如果你的 Map Key 是 "WEB" 或 "Java"，请改这里。
+const router = useRouter()
+
+// 表格 loading 状态
+const loading = ref(false)
+const tableData = ref([])
+
+// 默认选中部门
 const currentDepartment = ref('Backend')
 
-// ✅ 2. 修改选项列表
-// value 必须严格匹配后端 Go 代码里的 Map Key (注意大小写！)
+// 部门选项 (必须和后端 Go 代码里的 Key 完全一致)
 const departmentOptions = [
-  { label: '后端 (Golang)', value: 'Backend' },   // 对应后端 "Backend"
-  { label: '前端 (Web)', value: 'Frontend' },     // 对应后端 "Frontend"
-  { label: 'Android', value: 'Android' },         // 对应后端 "Android"
-  { label: 'iOS', value: 'IOS' },                 // 对应后端 "IOS" (注意全大写)
-  { label: 'SRE (运维)', value: 'Sre' },          // 对应后端 "Sre"
-  { label: '产品', value: 'Product' },            // 对应后端 "Product"
-  { label: '设计', value: 'Design' }              // 对应后端 "Design"
+  { label: '后端 (Golang)', value: 'Backend' },
+  { label: '前端 (Web)', value: 'Frontend' },
+  { label: 'Android', value: 'Android' },
+  { label: 'iOS', value: 'IOS' },
+  { label: 'SRE (运维)', value: 'Sre' },
+  { label: '产品', value: 'Product' },
+  { label: '设计', value: 'Design' }
 ]
 
+// 分页数据
 const pagination = reactive({
   page: 1,
   pageSize: 10,
   total: 0
 })
 
+// === 👇 新增：发布作业逻辑 ===
+const dialogVisible = ref(false) // 控制弹窗显示
+const createLoading = ref(false) // 发布按钮 loading
+
+// 表单数据
+const form = reactive({
+  title: '',
+  description: '',
+  department: 'Backend', // 默认选中后端
+  deadline: '',
+  allow_late: false
+})
+
+// 打开弹窗
+const handleOpenDialog = () => {
+  dialogVisible.value = true
+}
+
+// 提交发布
+const handleCreate = async () => {
+  // 简单校验
+  if (!form.title || !form.deadline) {
+    ElMessage.warning('标题和截止时间必填')
+    return
+  }
+
+  createLoading.value = true
+  try {
+    // 调用 API
+    await createHomework({
+      title: form.title,
+      description: form.description,
+      department: form.department,
+      deadline: form.deadline,
+      allow_late: form.allow_late
+    })
+
+    ElMessage.success('发布成功！')
+    dialogVisible.value = false // 关闭弹窗
+    fetchData() // 🔄 刷新列表，看到新作业
+
+    // 重置表单
+    form.title = ''
+    form.description = ''
+    form.deadline = ''
+  } catch (error) {
+    console.error("发布失败", error)
+    // ElMessage.error('发布失败，请检查网络或权限')
+    // (注意：如果是学生账号发布，后端会返回 403/500，axios 拦截器可能会统一处理错误)
+  } finally {
+    createLoading.value = false
+  }
+}
+// === 👆 新增结束 ===
+
+
+// 获取数据方法
 const fetchData = async () => {
   loading.value = true
   try {
@@ -39,13 +97,10 @@ const fetchData = async () => {
       pageSize: pagination.pageSize,
       department: currentDepartment.value
     })
-
     tableData.value = res.data.list
     pagination.total = res.data.total
-
   } catch (error) {
     console.error("获取失败", error)
-    ElMessage.error('查询失败：请检查部门名称是否正确')
   } finally {
     loading.value = false
   }
@@ -60,7 +115,6 @@ const handlePageChange = (newPage: number) => {
   fetchData()
 }
 
-
 const handleDepartmentChange = () => {
   pagination.page = 1
   fetchData()
@@ -74,7 +128,6 @@ const handleDepartmentChange = () => {
         <div class="card-header">
           <div class="left-panel">
             <span>作业列表</span>
-
             <el-select
                 v-model="currentDepartment"
                 placeholder="选择部门"
@@ -90,7 +143,7 @@ const handleDepartmentChange = () => {
             </el-select>
           </div>
 
-          <el-button type="primary">发布作业</el-button>
+          <el-button type="primary" @click="handleOpenDialog">发布作业 (管理员)</el-button>
         </div>
       </template>
 
@@ -124,12 +177,65 @@ const handleDepartmentChange = () => {
         />
       </div>
     </el-card>
+
+    <el-dialog
+        v-model="dialogVisible"
+        title="发布新作业"
+        width="500px"
+    >
+      <el-form label-width="80px">
+        <el-form-item label="标题">
+          <el-input v-model="form.title" placeholder="请输入作业标题" />
+        </el-form-item>
+
+        <el-form-item label="所属部门">
+          <el-select v-model="form.department" placeholder="请选择">
+            <el-option
+                v-for="item in departmentOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="截止时间">
+          <el-date-picker
+              v-model="form.deadline"
+              type="datetime"
+              placeholder="选择截止时间"
+              value-format="YYYY-MM-DD HH:mm:ss"
+              style="width: 100%"
+          />
+        </el-form-item>
+
+        <el-form-item label="允许补交">
+          <el-switch v-model="form.allow_late" />
+        </el-form-item>
+
+        <el-form-item label="作业描述">
+          <el-input
+              v-model="form.description"
+              type="textarea"
+              :rows="4"
+              placeholder="请输入作业的具体要求..."
+          />
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogVisible = false">取消</el-button>
+          <el-button type="primary" @click="handleCreate" :loading="createLoading">
+            确认发布
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <style scoped>
-
-
 .page-container {
   padding: 20px;
 }
