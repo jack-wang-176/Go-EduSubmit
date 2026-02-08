@@ -24,6 +24,13 @@ const routes: Array<RouteRecordRaw> = [
                 path: 'homework/:id',
                 name: 'HomeworkDetail',
                 component: () => import('../views/homework/Detail.vue')
+            },
+
+            {
+
+                path: 'homework/:id/submissions',
+                name: 'HomeworkSubmissions',
+                component: () => import('../views/homework/Submissions.vue')
             }
         ]
     }

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-// ✅ 引入 createHomework
+// 引入 createHomework
 import { getHomeworkList, createHomework } from '../../api/homework'
 import { ElMessage } from 'element-plus'
 
@@ -32,7 +32,7 @@ const pagination = reactive({
   total: 0
 })
 
-// === 👇 新增：发布作业逻辑 ===
+// === 👇 发布作业逻辑 ===
 const dialogVisible = ref(false) // 控制弹窗显示
 const createLoading = ref(false) // 发布按钮 loading
 
@@ -79,13 +79,11 @@ const handleCreate = async () => {
     form.deadline = ''
   } catch (error) {
     console.error("发布失败", error)
-    // ElMessage.error('发布失败，请检查网络或权限')
-    // (注意：如果是学生账号发布，后端会返回 403/500，axios 拦截器可能会统一处理错误)
   } finally {
     createLoading.value = false
   }
 }
-// === 👆 新增结束 ===
+// === 👆 发布逻辑结束 ===
 
 
 // 获取数据方法
@@ -153,7 +151,7 @@ const handleDepartmentChange = () => {
         <el-table-column prop="description" label="内容" show-overflow-tooltip />
         <el-table-column prop="deadline" label="截止时间" width="180" />
 
-        <el-table-column label="操作" width="150">
+        <el-table-column label="操作" width="220">
           <template #default="scope">
             <el-button
                 link
@@ -162,6 +160,15 @@ const handleDepartmentChange = () => {
                 @click="router.push(`/homework/${scope.row.id}`)"
             >
               详情
+            </el-button>
+
+            <el-button
+                link
+                type="warning"
+                size="small"
+                @click="router.push(`/homework/${scope.row.id}/submissions`)"
+            >
+              批改
             </el-button>
           </template>
         </el-table-column>
