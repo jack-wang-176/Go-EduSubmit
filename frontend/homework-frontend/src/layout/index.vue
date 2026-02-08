@@ -5,7 +5,7 @@ import { SwitchButton, User } from '@element-plus/icons-vue'
 const router = useRouter()
 
 const handleLogout = () => {
-  localStorage.removeItem('token')
+  localStorage.clear() // 建议用 clear 清除所有信息（包括 role）
   router.push('/login')
 }
 </script>
@@ -15,6 +15,12 @@ const handleLogout = () => {
     <el-container>
       <el-header class="header">
         <div class="logo">Maple 作业管理系统</div>
+
+        <div class="nav-menu">
+          <el-button link class="nav-item" @click="router.push('/homework')">作业列表</el-button>
+          <el-button link class="nav-item" @click="router.push('/excellent')">🏆 优秀作业墙</el-button>
+        </div>
+
         <div class="user-info">
           <el-dropdown>
             <span class="el-dropdown-link">
@@ -41,7 +47,7 @@ const handleLogout = () => {
   background-color: #fff;
   border-bottom: 1px solid #dcdfe6;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* 左右两端对齐，中间导航自动居中 */
   align-items: center;
   height: 60px;
   padding: 0 20px;
@@ -51,6 +57,22 @@ const handleLogout = () => {
   font-weight: bold;
   color: #409EFF;
 }
+
+/* ✅ 新增导航样式 */
+.nav-menu {
+  flex: 1; /* 占据中间空间 */
+  display: flex;
+  margin-left: 40px;
+}
+.nav-item {
+  font-size: 16px;
+  margin-right: 20px;
+  color: #606266;
+}
+.nav-item:hover {
+  color: #409EFF;
+}
+
 .el-dropdown-link {
   cursor: pointer;
   display: flex;

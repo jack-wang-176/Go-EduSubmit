@@ -44,3 +44,10 @@ export const reviewSubmission = (data: ReviewData) => {
         }
     })
 }
+export const getExcellentSubmissions = (params: any) => {
+    return request({
+        url: '/submission/excellent', // 对应后端 GET /submission/excellent
+        method: 'get',
+        params
+    })
+}

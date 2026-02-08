@@ -41,3 +41,9 @@ export const createHomework = (data: CreateHomeworkData) => {
         data
     })
 }
+export const deleteHomework = (id: number) => {
+    return request({
+        url: `/homework/${id}`, // 对应后端 DELETE /homework/:id
+        method: 'delete'
+    })
+}

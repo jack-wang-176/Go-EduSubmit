@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-// 引入 createHomework
-import { getHomeworkList, createHomework } from '../../api/homework'
-import { ElMessage } from 'element-plus'
+// ✅ 引入 ElMessageBox 和 deleteHomework
+import { getHomeworkList, createHomework, deleteHomework } from '../../api/homework'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
 
@@ -11,10 +11,13 @@ const router = useRouter()
 const loading = ref(false)
 const tableData = ref([])
 
+// ✅ 新增：当前用户角色 (用于控制按钮显示)
+const userRole = ref('')
+
 // 默认选中部门
 const currentDepartment = ref('Backend')
 
-// 部门选项 (必须和后端 Go 代码里的 Key 完全一致)
+// 部门选项
 const departmentOptions = [
   { label: '后端 (Golang)', value: 'Backend' },
   { label: '前端 (Web)', value: 'Frontend' },
@@ -33,34 +36,28 @@ const pagination = reactive({
 })
 
 // === 👇 发布作业逻辑 ===
-const dialogVisible = ref(false) // 控制弹窗显示
-const createLoading = ref(false) // 发布按钮 loading
+const dialogVisible = ref(false)
+const createLoading = ref(false)
 
-// 表单数据
 const form = reactive({
   title: '',
   description: '',
-  department: 'Backend', // 默认选中后端
+  department: 'Backend',
   deadline: '',
   allow_late: false
 })
 
-// 打开弹窗
 const handleOpenDialog = () => {
   dialogVisible.value = true
 }
 
-// 提交发布
 const handleCreate = async () => {
-  // 简单校验
   if (!form.title || !form.deadline) {
     ElMessage.warning('标题和截止时间必填')
     return
   }
-
   createLoading.value = true
   try {
-    // 调用 API
     await createHomework({
       title: form.title,
       description: form.description,
@@ -68,12 +65,10 @@ const handleCreate = async () => {
       deadline: form.deadline,
       allow_late: form.allow_late
     })
-
     ElMessage.success('发布成功！')
-    dialogVisible.value = false // 关闭弹窗
-    fetchData() // 🔄 刷新列表，看到新作业
-
-    // 重置表单
+    dialogVisible.value = false
+    fetchData()
+    // 重置
     form.title = ''
     form.description = ''
     form.deadline = ''
@@ -85,6 +80,29 @@ const handleCreate = async () => {
 }
 // === 👆 发布逻辑结束 ===
 
+// === 👇 新增：删除作业逻辑 ===
+const handleDelete = (id: number) => {
+  ElMessageBox.confirm(
+      '确定要删除这个作业吗？删除后所有学生的提交记录也会一并消失，不可恢复！',
+      '高危操作警告',
+      {
+        confirmButtonText: '确定删除',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+  ).then(async () => {
+    try {
+      await deleteHomework(id)
+      ElMessage.success('删除成功')
+      fetchData() // 刷新列表
+    } catch (error) {
+      console.error(error)
+    }
+  }).catch(() => {
+    // 取消删除
+  })
+}
+// === 👆 删除逻辑结束 ===
 
 // 获取数据方法
 const fetchData = async () => {
@@ -105,6 +123,9 @@ const fetchData = async () => {
 }
 
 onMounted(() => {
+  // ✅ 获取用户角色 (假设你在 Login.vue 里存的是 'role')
+  // 这里的判断逻辑是：如果是 'admin' 或者是数字 '2' (取决于你后端返回啥)
+  userRole.value = localStorage.getItem('role') || 'student'
   fetchData()
 })
 
@@ -141,7 +162,13 @@ const handleDepartmentChange = () => {
             </el-select>
           </div>
 
-          <el-button type="primary" @click="handleOpenDialog">发布作业 (管理员)</el-button>
+          <el-button
+              v-if="userRole === 'admin' || userRole === '2'"
+              type="primary"
+              @click="handleOpenDialog"
+          >
+            发布作业 (管理员)
+          </el-button>
         </div>
       </template>
 
@@ -163,12 +190,23 @@ const handleDepartmentChange = () => {
             </el-button>
 
             <el-button
+                v-if="userRole === 'admin' || userRole === '2'"
                 link
                 type="warning"
                 size="small"
                 @click="router.push(`/homework/${scope.row.id}/submissions`)"
             >
               批改
+            </el-button>
+
+            <el-button
+                v-if="userRole === 'admin' || userRole === '2'"
+                link
+                type="danger"
+                size="small"
+                @click="handleDelete(scope.row.id)"
+            >
+              删除
             </el-button>
           </template>
         </el-table-column>

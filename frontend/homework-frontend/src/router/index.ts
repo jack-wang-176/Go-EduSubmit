@@ -25,12 +25,16 @@ const routes: Array<RouteRecordRaw> = [
                 name: 'HomeworkDetail',
                 component: () => import('../views/homework/Detail.vue')
             },
-
             {
 
                 path: 'homework/:id/submissions',
                 name: 'HomeworkSubmissions',
                 component: () => import('../views/homework/Submissions.vue')
+            },
+            {
+                path: 'excellent', // 访问路径 /excellent
+                name: 'Excellent',
+                component: () => import('../views/homework/Excellent.vue')
             }
         ]
     }
