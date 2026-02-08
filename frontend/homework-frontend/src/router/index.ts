@@ -18,6 +18,12 @@ const routes: Array<RouteRecordRaw> = [
                 path: 'homework', // 实际路径是 /homework
                 name: 'HomeworkList',
                 component: () => import('../views/homework/List.vue')
+            },
+            {
+
+                path: 'homework/:id',
+                name: 'HomeworkDetail',
+                component: () => import('../views/homework/Detail.vue')
             }
         ]
     }

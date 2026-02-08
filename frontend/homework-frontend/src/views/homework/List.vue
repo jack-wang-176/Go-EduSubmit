@@ -2,7 +2,8 @@
 import { ref, onMounted, reactive } from 'vue'
 import { getHomeworkList } from '../../api/homework'
 import { ElMessage } from 'element-plus'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 // 表格数据
 const tableData = ref([])
 const loading = ref(false)
@@ -96,11 +97,19 @@ const handleDepartmentChange = () => {
       <el-table :data="tableData" style="width: 100%" v-loading="loading" border>
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="title" label="作业标题" />
-        <el-table-column prop="content" label="内容" show-overflow-tooltip />
+        <el-table-column prop="description" label="内容" show-overflow-tooltip />
         <el-table-column prop="deadline" label="截止时间" width="180" />
+
         <el-table-column label="操作" width="150">
-          <template #default>
-            <el-button link type="primary" size="small">详情</el-button>
+          <template #default="scope">
+            <el-button
+                link
+                type="primary"
+                size="small"
+                @click="router.push(`/homework/${scope.row.id}`)"
+            >
+              详情
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -119,6 +128,8 @@ const handleDepartmentChange = () => {
 </template>
 
 <style scoped>
+
+
 .page-container {
   padding: 20px;
 }

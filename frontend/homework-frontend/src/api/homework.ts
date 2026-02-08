@@ -19,3 +19,9 @@ export const getHomeworkList = (params: HomeworkQuery) => {
         }
     })
 }
+export const getHomeworkDetail = (id: number) => {
+    return request({
+        url: `/homework/${id}`, // 对应后端 GET /homework/:id
+        method: 'get'
+    })
+}
