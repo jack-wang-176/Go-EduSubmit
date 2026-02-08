@@ -152,15 +152,34 @@ func (s *submission) ChangeSub(c *web.Context) {
 	SendResponse(c, data, nil, "批改成功")
 }
 func (s *submission) GetExcellentList(c *web.Context) {
-	page, _ := strconv.Atoi(c.Query("page"))
-	pageSize, _ := strconv.Atoi(c.Query("page_size"))
+	// 1. 获取参数 (并处理默认值)
+	pageStr := c.Query("page")
+	// ⚠️ 关键修正：前端发的是 pageSize，后端之前只读 page_size
+	// 这里做个兼容，先读 pageSize，读不到再读 page_size
+	pageSizeStr := c.Query("pageSize")
+	if pageSizeStr == "" {
+		pageSizeStr = c.Query("page_size")
+	}
 
+	page, _ := strconv.Atoi(pageStr)
+	pageSize, _ := strconv.Atoi(pageSizeStr)
+
+	// 2. 🛡️ 容错处理：如果参数没传或者转数字失败，给默认值
+	if page <= 0 {
+		page = 1
+	}
+	if pageSize <= 0 {
+		pageSize = 10 // 默认每页 10 条
+	}
+
+	// 3. 调用 Service
 	list, err := service.SubService.GetExcellentList(page, pageSize)
 	if err != nil {
 		SendResponse(c, nil, err)
 		return
 	}
 
+	// 定义响应结构体 (建议移到 handler 外面或 model 包里，但放这里也能用)
 	type HomeworkInfo struct {
 		ID              uint   `json:"id"`
 		Title           string `json:"title"`
@@ -174,45 +193,59 @@ func (s *submission) GetExcellentList(c *web.Context) {
 	}
 
 	type ExcellentItem struct {
-		ID       uint         `json:"id"`
-		Homework HomeworkInfo `json:"homework"`
-		Student  StudentInfo  `json:"student"`
-		Score    int          `json:"score"`
-		Comment  string       `json:"comment"`
+		ID        uint         `json:"id"`
+		Homework  HomeworkInfo `json:"homework"`
+		Student   StudentInfo  `json:"student"`
+		Score     int          `json:"score"`
+		Comment   string       `json:"comment"`
+		CreatedAt string       `json:"created_at"` // 建议加上时间
 	}
 
 	resList := make([]ExcellentItem, 0)
 
+	// 4. 数据转换 (Model -> ViewModel)
 	if list != nil && list.ListSub != nil {
 		for _, item := range *list.ListSub {
-			if &item != nil {
-				elem := ExcellentItem{
-					ID:      item.ID,
-					Comment: item.Comment,
-					Score:   -1,
-				}
-				if item.Score != nil {
-					elem.Score = *item.Score
-				}
+			// 这里不需要 if &item != nil，range 出来的 item 是结构体值拷贝，永远不会是 nil
 
-				if item.Homework.ID != 0 {
-					elem.Homework.ID = item.Homework.ID
-					elem.Homework.Title = item.Homework.Title
-					elem.Homework.Department = model.DeptNameMap[item.Homework.Department]
-					elem.Homework.DepartmentLabel = model.DeptLabelMap[item.Homework.Department]
-				} else {
-					elem.Homework.Title = "未知作业"
-				}
-
-				if item.Student.ID != 0 {
-					elem.Student.ID = item.Student.ID
-					elem.Student.Nickname = item.Student.Nickname
-				} else {
-					elem.Student.Nickname = "未知用户"
-				}
-
-				resList = append(resList, elem)
+			elem := ExcellentItem{
+				ID:      item.ID,
+				Comment: item.Comment,
+				Score:   0, // 默认 0
+				// 格式化时间
+				CreatedAt: item.CreatedAt.Format("2006-01-02 15:04:05"),
 			}
+
+			if item.Score != nil {
+				elem.Score = *item.Score
+			}
+
+			// 填充作业信息
+			if item.Homework.ID != 0 {
+				elem.Homework.ID = item.Homework.ID
+				elem.Homework.Title = item.Homework.Title
+				// 映射部门名称
+				if val, ok := model.DeptNameMap[item.Homework.Department]; ok {
+					elem.Homework.Department = val
+				} else {
+					elem.Homework.Department = strconv.Itoa(int(item.Homework.Department))
+				}
+				if val, ok := model.DeptLabelMap[item.Homework.Department]; ok {
+					elem.Homework.DepartmentLabel = val
+				}
+			} else {
+				elem.Homework.Title = "作业已被删除"
+			}
+
+			// 填充学生信息
+			if item.Student.ID != 0 {
+				elem.Student.ID = item.Student.ID
+				elem.Student.Nickname = item.Student.Nickname
+			} else {
+				elem.Student.Nickname = "未知用户"
+			}
+
+			resList = append(resList, elem)
 		}
 	}
 
@@ -221,6 +254,7 @@ func (s *submission) GetExcellentList(c *web.Context) {
 		total = list.Total
 	}
 
+	// 5. 构造返回数据
 	data := map[string]interface{}{
 		"list":      resList,
 		"total":     total,
