@@ -1,0 +1,21 @@
+import request from '../utils/request'
+
+// 定义前端调用的参数结构
+interface HomeworkQuery {
+    page: number
+    pageSize: number // 前端代码习惯用驼峰
+    department: string // ✅ 必填：后端必须依靠这个字符串去查 Map
+}
+
+export const getHomeworkList = (params: HomeworkQuery) => {
+    return request({
+        url: '/homework',
+        method: 'get',
+        // 🚀 核心修改：在这里手动组装参数名，适配你的后端
+        params: {
+            page: params.page,
+            page_size: params.pageSize, // 把前端的 pageSize 映射给后端的 page_size
+            department: params.department // ✅ 把部门字符串传过去
+        }
+    })
+}

@@ -45,6 +45,7 @@ func (d *homeworkDao) GetHomeworkByID(id uint) (*model.Homework, error) {
 func (d *homeworkDao) GetHomeworkByDepartment(department model.Department, page, pageSize int) ([]model.Homework, int64, error) {
 	var homeworks []model.Homework
 	var total int64
+
 	query := DB.Model(&model.Homework{}).Where("Department = ?", department)
 	if query.Error != nil {
 		return nil, 0, query.Error

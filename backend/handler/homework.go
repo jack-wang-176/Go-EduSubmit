@@ -140,10 +140,9 @@ func (h *homework) GetHomework(c *web.Context) {
 	parseUint, err2 := strconv.ParseUint(param, 10, 64)
 	if err2 != nil {
 		SendResponse(c, nil, pkg.ParamError)
+		return
 	}
-	if err2 != nil {
-		SendResponse(c, nil, pkg.ParamError)
-	}
+
 	homework, err := service.HomeworkService.GetHomeworkId(uint(parseUint))
 	if err != nil {
 		SendResponse(c, nil, err)
