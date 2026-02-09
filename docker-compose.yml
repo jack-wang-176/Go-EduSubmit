@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # === 1. 数据库服务 (MySQL) ===
+  mysql:
+    image: mysql:8.0
+    container_name: maple-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456  # 你的数据库密码
+      MYSQL_DATABASE: winter_project # 自动创建的数据库名
+    volumes:
+      # 把数据存在当前目录下的 mysql-data 文件夹，防止丢失
+      - ./mysql-data:/var/lib/mysql
+    ports:
+      - "3307:3306" # 外部访问用 3307，内部互联用 3306
+    networks:
+      - maple-net
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # === 2. 后端服务 (Go) ===
+  backend:
+    container_name: maple-backend
+    # ⚠️ 关键修改：指向你的 backend 文件夹
+    build: ./backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - maple-net
+    restart: always
+
+  # === 3. 前端服务 (Vue + Nginx) ===
+  frontend:
+    container_name: maple-frontend
+    # ⚠️ 关键修改：指向你的 frontend/homework-frontend 文件夹
+    build: ./frontend/homework-frontend
+    ports:
+      - "80:80" # 浏览器直接访问 localhost
+    depends_on:
+      - backend
+    networks:
+      - maple-net
+    restart: always
+
+# 创建一个专用网络，让大家能互相访问
+networks:
+  maple-net:
+    driver: bridge

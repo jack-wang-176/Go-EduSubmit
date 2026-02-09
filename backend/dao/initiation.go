@@ -9,7 +9,7 @@ import (
 
 var DB *gorm.DB
 
-var sqlStr = "root:123456@tcp(127.0.0.1:3306)/winter_project?charset=utf8mb4&parseTime=True&loc=Local"
+var sqlStr = "root:123456@tcp(maple-mysql:3306)/winter_project?charset=utf8mb4&parseTime=True&loc=Local"
 
 func InitDb() error {
 	var err error
