@@ -214,4 +214,4 @@ ALTER TABLE submissions ADD COLUMN reviewed_at DATETIME NULL COMMENT '批改时�
 
 ## 📄 许可证 (License)
 
-[MIT License](./MIT)
+[MIT License](LICENSE)
