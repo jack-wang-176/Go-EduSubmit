@@ -25,6 +25,10 @@ services:
     container_name: maple-backend
     # ⚠️ 关键修改：指向你的 backend 文件夹
     build: ./backend
+    environment:
+      - TZ=Asia/Shanghai   # 强制指定时区环境变量
+    volumes:
+      - /etc/localtime:/etc/localtime:ro  # 同步宿主机时间文件
     ports:
       - "8080:8080"
     depends_on:

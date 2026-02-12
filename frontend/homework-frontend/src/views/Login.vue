@@ -90,12 +90,21 @@ const handleSubmit = async () => {
       })
       ElMessage.success('登录成功')
 
-      localStorage.setItem('token', res.data.token)
-      // 注意：有的后端返回结构可能是 res.data.role 而不是 res.data.user.role，请根据实际情况调整
-      localStorage.setItem('role', res.data.user ? res.data.user.role : res.data.role)
-      localStorage.setItem('nickname', res.data.user ? res.data.user.nickname : res.data.nickname)
+      // 1. 打印出来确认一下 (调试完可以删掉)
+      console.log('登录成功返回:', res)
 
-      // 2. 修复：给 router.push 加上 await，消除警告
+      // 2. 【核心修改】改成 res.data.access_token
+      // 你的 request.ts 拦截器已经返回了 response.data，所以这里的 res 就是后端返回的 JSON
+      localStorage.setItem('token', res.data.access_token)
+
+      // 3. 顺便修复一下用户信息获取 (根据你的 JSON 结构，user 在 res.data.user 里)
+      if (res.data.user) {
+        localStorage.setItem('role', res.data.user.role)
+        localStorage.setItem('nickname', res.data.user.nickname)
+        // 建议把 userID 也存一下，以后可能用得着
+        localStorage.setItem('userID', res.data.user.id)
+      }
+
       await router.push('/')
     } catch (error) {
       console.error('登录失败:', error)
