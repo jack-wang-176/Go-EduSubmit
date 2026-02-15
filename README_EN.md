@@ -12,23 +12,17 @@
 <br>
 
 ---
-##  Quick Start
+## Quick Start (Getting Started)
 
-###  1. Run directly via GitHub Packages
+* Go to the **Releases** page and download the `user-docker-compose.yml` file.
+* Run the following command in the directory where the file is located:
+
 ```bash
-docker run -d -p 8080:8080 ghcr.io/jack-wang-176/maple-backend:v1.1
+   docker-compose up -d
 
 ```
 
-###  2. Deploy via Release
-
-1. **Prerequisite** Ensure **Docker Desktop** is installed and running on your computer.
-2. **Download Config** Download the `docker-compose.yml` file from the **Assets** section below to any directory.
-3. **One-Click Start** Open a terminal (Terminal / CMD) in the directory where the file is located and execute the following command:
-```bash
-docker-compose up -d
-```
-
+* Visit `http://localhost` in your browser.
 ##  Project Introduction
 
 This project aims to implement a complete website with Docker deployment by combining **Go**, **Vue 3**, **Docker**, and other technologies, realizing the core business functions of a homework management system.
