@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  # 1. 数据库 (自动初始化)
+  mysql:
+    image: mysql:8.0
+    container_name: maple-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: winter_project
+      TZ: Asia/Shanghai
+    volumes:
+      - mysql-data:/var/lib/mysql # 使用具名卷，数据持久化
+    networks:
+      - maple-net
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # 2. 后端 (直接拉取你的 v1.1 镜像)
+  backend:
+    image: ghcr.io/jack-wang-176/maple-backend:v1.1  # <--- 关键：用镜像，不要用 build
+    container_name: maple-backend
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - maple-net
+    restart: always
+
+  # 3. 前端 (直接拉取你的 v1.1 镜像)
+  frontend:
+    image: ghcr.io/jack-wang-176/maple-frontend:v1.1 # <--- 关键：前端也用镜像
+    container_name: maple-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - maple-net
+    restart: always
+
+networks:
+  maple-net:
+    driver: bridge
+
+volumes:
+  mysql-data: # 自动创建数据卷

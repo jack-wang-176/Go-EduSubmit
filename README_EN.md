@@ -12,37 +12,37 @@
 <br>
 
 ---
-## 🚀 Quick Start
+##  Quick Start
 
-### 🐳 1. Run directly via GitHub Packages
+###  1. Run directly via GitHub Packages
 ```bash
-docker run -d -p 8080:8080 ghcr.io/jack-wang-176/maple-backend:v1.0.0
+docker run -d -p 8080:8080 ghcr.io/jack-wang-176/maple-backend:v1.1
 
 ```
 
-### 📦 2. Deploy via Release
+###  2. Deploy via Release
 
-1. **🛠️ Prerequisite** Ensure **Docker Desktop** is installed and running on your computer.
-2. **📥 Download Config** Download the `docker-compose.yml` file from the **Assets** section below to any directory.
-3. **▶️ One-Click Start** Open a terminal (Terminal / CMD) in the directory where the file is located and execute the following command:
+1. **Prerequisite** Ensure **Docker Desktop** is installed and running on your computer.
+2. **Download Config** Download the `docker-compose.yml` file from the **Assets** section below to any directory.
+3. **One-Click Start** Open a terminal (Terminal / CMD) in the directory where the file is located and execute the following command:
 ```bash
 docker-compose up -d
 ```
 
-## 📖 Project Introduction
+##  Project Introduction
 
 This project aims to implement a complete website with Docker deployment by combining **Go**, **Vue 3**, **Docker**, and other technologies, realizing the core business functions of a homework management system.
 
-## ✨ Features
+##  Features
 
-### 👨‍🎓 Student Portal
+###  Student Portal
 
 * **Homework Submission**: Supports text content and file link submission.
 * **Submission History (`/mysub`)**: View personal submission records.
 * **View Excellent Homework**: Access highly-rated assignments.
 * **API Features**: Returns nested, simplified `homework` information (title, department) while filtering out irrelevant fields.
 
-### 👩‍🏫 Teacher/Admin Portal
+###  Teacher/Admin Portal
 
 * **Homework Overview (`/submission/homework/:id`)**: View all student submissions for a specific assignment.
 * **API Features**: Returns nested `student` information (nickname, department) to facilitate identity verification for teachers.
@@ -50,7 +50,7 @@ This project aims to implement a complete website with Docker deployment by comb
 * **Technical Highlights**: Implements optimistic locking using the CAS (Compare-And-Swap) concept to ensure data consistency.
 * **Excellent Homework Management (`/excellent`)**: One-click mark/unmark excellent assignments. Public display interface with department filtering support.
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 * **Language**: Go (Golang) 1.25 | TypeScript
 * **Web Framework**: [Maple](https://github.com/jack-wang-176/Maple)
@@ -59,7 +59,7 @@ This project aims to implement a complete website with Docker deployment by comb
 * **ORM**: GORM v2
 * **Database**: MySQL 8.0
 * **Toolkit**: Custom error handling (pkg/errors)
-## 📂 Project Structure
+##  Project Structure
 
 Follows a standard Go project layered architecture with single responsibility and easy maintenance.
 
@@ -104,9 +104,9 @@ Follows a standard Go project layered architecture with single responsibility an
 └── 接口测试.openapi.json    # API Definition File (OpenAPI 3.0)
 
 ```
-## 🏗️ Architecture & Design
+##  Architecture & Design
 
-### 🧱 Data Model
+###  Data Model
 
 * 1. The project designs `user`, `submission`, and `homework` fields to abstract specific business entities. The corresponding data tables are created upon database initialization. To resolve the relationships between these three entities, I adopted the method of **embedded structs** to eliminate the need for creating intermediate tables. Since `gorm.Model` is used, all data tables utilize **soft deletion**.
 
@@ -118,7 +118,7 @@ Follows a standard Go project layered architecture with single responsibility an
 
 
 
-### 🪜 Layered Architecture
+### Layered Architecture
 
 * 1. The business level is divided into three layers: `dao`, `service`, and `handler`. The `dao` layer handles database operations; the `service` layer performs further data processing, validation, and assembly; the `handler` layer is for specific route mounting and handles data transfer within `context` and `json`.
 
@@ -130,7 +130,7 @@ Follows a standard Go project layered architecture with single responsibility an
 
 
 
-### 🚨 Error Handling
+###  Error Handling
 
 * 1. Our error handling is divided into two categories: **Business Errors** and **Concrete Errors**. Business errors have custom error messages and codes defined by us, while Concrete errors are encapsulated and propagated as-is. We designed a specific error structure specification where errors are classified based on the first digit of the status code:
 
@@ -145,7 +145,7 @@ Follows a standard Go project layered architecture with single responsibility an
 
 
 
-### 📤 Unified Response
+###  Unified Response
 
 * 1. In the `handler`, I designed a specific `sendResponse` struct/function to throw corresponding business responses, using variadic parameters to meet specific reply requirements.
 
@@ -157,7 +157,7 @@ Follows a standard Go project layered architecture with single responsibility an
 
 
 
-### 🔄 Data Transmission & Context
+###  Data Transmission & Context
 
 * 1. Information is transmitted in two ways: via **Request Headers** and via **Request Parameters**.
 
@@ -176,7 +176,7 @@ Follows a standard Go project layered architecture with single responsibility an
 
 * 2. Token creation happens at `login`. The `accessToken` is carried in the header. The `refreshToken` is used for refreshing (providing a refresh interface that does not require verification) and is stored in the database. When setting a new `refreshToken`, the previous `token` is marked as **expired**.
 
-## 📝 API Overview
+##  API Overview
 
 ### [Detailed API Requirements](https://www.google.com/search?q=Assessment_API.md)
 
@@ -209,7 +209,7 @@ Follows a standard Go project layered architecture with single responsibility an
 * **Query**: `page=1&page_size=10`
 * **Response**: Includes complete nested information for both `homework` (assignment) and `student` (author).
 
-## 📚 API Documentation
+##  API Documentation
 
 This project is designed based on the OpenAPI 3.0 specification. To facilitate debugging for developers, we provide a complete interface definition file.
 
@@ -217,7 +217,7 @@ This project is designed based on the OpenAPI 3.0 specification. To facilitate d
 
 The repository includes the exported API specification file, which supports direct import into **Postman**, **Apifox**, or **Swagger UI**.
 
-* 📄 **Interface Definition File**: [接口测试.openapi.json](https://www.google.com/search?q=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95.openapi.json)
+*  **Interface Definition File**: [接口测试.openapi.json](https://www.google.com/search?q=%E6%8E%A5%E5%8F%A3%E6%B5%8B%E8%AF%95.openapi.json)
   *(Click the link to view source directly, or right-click and "Save As" to download)*
 
 **How to use:**
@@ -230,10 +230,10 @@ The repository includes the exported API specification file, which supports dire
 
 ---
 
-## 🤝 Contribution
+##  Contribution
 
 Issues and Pull Requests are welcome to improve this project!
 
-## 📄 License
+##  License
 
 [MIT License](https://www.google.com/search?q=LICENSE)
